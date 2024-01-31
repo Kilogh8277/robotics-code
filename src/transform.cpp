@@ -14,18 +14,12 @@ struct JointInfo {
 
     // Important joint information
     Transform transform;
+    void (*rotationFunc)(double, double*);
 };
 
 struct JointInfo joints[joint_length];
 int num_joints = 0, num_actuators = 0;
 uint8_t initialized = 0;
-
-// void calculateTransform(Orientation rotation, Vector3 displacement, double* transform) {
-//     transform[0] = rotation[0]; transform[1] = rotation[1]; transform[2] = rotation[2];  transform[3] = displacement[0];
-//     transform[4] = rotation[3]; transform[5] = rotation[4]; transform[6] = rotation[5];  transform[7] = displacement[1];
-//     transform[8] = rotation[6]; transform[9] = rotation[7]; transform[10] = rotation[8]; transform[11] = displacement[2];
-//     transform[12] = 0;          transform[13] = 0;          transform[14] = 0;           transform[15] = 1;
-// }
 
 JointInfo* findJointByName(std::string nameToFind) {
     JointInfo* currJoint;
@@ -207,6 +201,15 @@ void parseURDF(char* urdf_file) {
 
                     std::stringstream axis_stream(axis_str);
                     axis_stream >> newJoint->axis[0] >> newJoint->axis[1] >> newJoint->axis[2];
+                    if (newJoint->axis[0]) {
+                        newJoint->rotationFunc = &rotx;
+                    }
+                    if (newJoint->axis[1]) {
+                        newJoint->rotationFunc = &roty;
+                    }
+                    if (newJoint->axis[2]) {
+                        newJoint->rotationFunc = &rotz;
+                    }
                 }
                 std::getline(file, line);
             }
