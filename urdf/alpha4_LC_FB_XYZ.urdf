@@ -1,0 +1,842 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot name="Robot">
+    <link name="World">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0  0  0"/>
+            <mass value="0"/>
+            <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+        </inertial>
+    </link>
+    
+	<link name="BasePosX">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0  0  0"/>
+            <mass value="0"/>
+            <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+        </inertial>
+    </link> 
+    <link name="BasePosY">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0  0  0"/>
+            <mass value="0"/>
+            <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+        </inertial>
+    </link> 
+	<link name="BasePosZ">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0  0  0"/>
+            <mass value="0"/>
+            <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+        </inertial>
+    </link>
+	<link name="BaseRotX">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0  0  0"/>
+            <mass value="0"/>
+            <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+        </inertial>
+    </link>
+	<link name="BaseRotY">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0  0  0"/>
+            <mass value="0"/>
+            <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+        </inertial>
+    </link>
+
+	<joint name="BasePosX" type="prismatic">
+        <origin xyz="0 0 0" rpy="0           0           0"/>
+        <parent link="World"/>
+        <child link="BasePosX"/>
+        <axis xyz="1 0 0"/>
+        <limit lower="-10" upper="10" effort="1000" velocity="10"/>
+        <dynamics damping="10"/>
+    </joint>
+    <joint name="BasePosY" type="prismatic">
+        <origin xyz="0 0 0" rpy="0           0           0"/>
+        <parent link="BasePosX"/>
+        <child link="BasePosY"/>
+        <axis xyz="0 1 0"/>
+        <limit lower="-10" upper="10" effort="1000" velocity="10"/>
+        <dynamics damping="10"/>
+    </joint>
+    <joint name="BasePosZ" type="prismatic">
+        <origin xyz="0 0 0" rpy="0           0           0"/>
+        <parent link="BasePosY"/>
+        <child link="BasePosZ"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="-10" upper="10" effort="1000" velocity="10"/>
+        <dynamics damping="10"/>
+    </joint>
+	<joint name="BaseRotX" type="revolute">
+        <origin xyz="0 0 0" rpy="0           0           0"/>
+        <parent link="BasePosZ"/>
+        <child link="BaseRotX"/>
+        <axis xyz="1 0 0"/>
+        <limit lower="-10" upper="10" effort="1000" velocity="10"/>
+        <dynamics damping="10"/>
+    </joint>
+	<joint name="BaseRotY" type="revolute">
+        <origin xyz="0 0 0" rpy="0           0           0"/>
+        <parent link="BaseRotX"/>
+        <child link="BaseRotY"/>
+        <axis xyz="0 1 0"/>
+        <limit lower="-10" upper="10" effort="1000" velocity="10"/>
+        <dynamics damping="10"/>
+    </joint>
+	<joint name="BaseRotZ" type="revolute">
+        <origin xyz="0 0 0" rpy="0           -1.570796327            0"/>
+        <parent link="BaseRotY"/>
+        <child link="BaseRotZ"/>
+        <axis xyz="1 0 0"/>
+        <limit lower="-10" upper="10" effort="1000" velocity="10"/>
+        <dynamics damping="10"/>
+    </joint>
+
+	<link name="BaseRotZ">
+        <inertial>
+            <origin xyz="0.0034931  0.00016093    0.037678" rpy="0  0  0"/>
+            <mass value="9.9856"/>
+            <inertia ixx="0.078087" ixy="2.0707e-05" ixz="-0.0089706" iyy="0.084503" iyz="-6.564e-05" izz="0.06521"/>
+        </inertial>
+        <visual>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/Pelvis.STL"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/Pelvis.STL"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="LeftHipRotate">
+        <inertial>
+            <origin xyz="-0.057929   0.0028485   -0.006235" rpy="0  0  0"/>
+            <mass value="2.3936"/>
+            <inertia ixx="0.0082213" ixy="-0.00082046" ixz="4.5726e-06" iyy="0.017108" iyz="-8.5445e-06" izz="0.01605"/>
+        </inertial>
+        <visual>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/LHipRot.STL"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/LHipRot.STL"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="LeftHipAbAd">
+        <inertial>
+            <origin xyz="0.068223 -0.00073753    0.050266" rpy="0  0  0"/>
+            <mass value="9.7479"/>
+            <inertia ixx="0.1086" ixy="-0.00036908" ixz="0.050418" iyy="0.16221" iyz="-0.0010336" izz="0.087359"/>
+        </inertial>
+        <visual>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/LHipAbAd.STL"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/LHipAbAd.STL"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="LeftHipFlex">
+        <inertial>
+            <origin xyz="0.2059    0.043292  -0.0068483" rpy="0  0  0"/>
+            <mass value="10.2809"/>
+            <inertia ixx="0.071006" ixy="0.087384" ixz="-0.014002" iyy="0.59514" iyz="-0.005036" izz="0.64462"/>
+        </inertial>
+        <visual>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/LHipFlex.STL"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/LHipFlex.STL"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="LeftKneeFlex">
+        <inertial>
+            <origin xyz="0.063715  0.00060322   0.0017683" rpy="0  0  0"/>
+            <mass value="4.1255"/>
+            <inertia ixx="0.008329" ixy="0.00051123" ixz="-9.6965e-05" iyy="0.045455" iyz="6.9414e-05" izz="0.045523"/>
+        </inertial>
+        <visual>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/LKneeFlex.STL"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/LKneeFlex.STL"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="LeftCalfRotate">
+        <inertial>
+            <origin xyz="-0.013245  0.00068063    -0.13607" rpy="0  0  0"/>
+            <mass value="6.4064"/>
+            <inertia ixx="0.16306" ixy="6.3653e-05" ixz="0.012638" iyy="0.16262" iyz="-0.00080505" izz="0.015196"/>
+        </inertial>
+        <visual>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/LCalfRot.STL"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/LCalfRot.STL"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="LeftAnkleFlex">
+        <inertial>
+            <origin xyz="0.10913    0.028201    0.088314" rpy="0  0  0"/>
+            <mass value="3.6355"/>
+            <inertia ixx="0.064688" ixy="0.01546" ixz="0.045665" iyy="0.098653" iyz="0.014097" izz="0.075813"/>
+        </inertial>
+        <visual>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/LAnkFlex.STL"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/LAnkFlex.STL"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="RightHipRotate">
+        <inertial>
+            <origin xyz="-0.057946   0.0028468   0.0062594" rpy="0  0  0"/>
+            <mass value="2.3927"/>
+            <inertia ixx="0.0082185" ixy="-0.00082037" ixz="-5.1399e-06" iyy="0.017106" iyz="8.9223e-06" izz="0.016049"/>
+        </inertial>
+        <visual>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/RHipRot.STL"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/RHipRot.STL"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="RightHipAbAd">
+        <inertial>
+            <origin xyz="0.068224   -0.001178   -0.050298" rpy="0  0  0"/>
+            <mass value="9.7486"/>
+            <inertia ixx="0.10868" ixy="-0.00077847" ixz="-0.050442" iyy="0.1623" iyz="0.0013495" izz="0.087367"/>
+        </inertial>
+        <visual>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/RHipAbAd.STL"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/RHipAbAd.STL"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="RightHipFlex">
+        <inertial>
+            <origin xyz="0.20597    0.043713   0.0068486" rpy="0  0  0"/>
+            <mass value="10.2809"/>
+            <inertia ixx="0.070656" ixy="0.089103" ixz="0.013837" iyy="0.59488" iyz="0.0050377" izz="0.64401"/>
+        </inertial>
+        <visual>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/RHipFlex.STL"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/RHipFlex.STL"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="RightKneeFlex">
+        <inertial>
+            <origin xyz="0.06364  0.00062226   -0.001758" rpy="0  0  0"/>
+            <mass value="4.1215"/>
+            <inertia ixx="0.0083257" ixy="0.00052311" ixz="0.00010184" iyy="0.045379" iyz="-6.9791e-05" izz="0.045442"/>
+        </inertial>
+        <visual>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/RKneeFlex.STL"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/RKneeFlex.STL"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="RightCalfRotate">
+        <inertial>
+            <origin xyz="-0.013245  0.00059905     0.13604" rpy="0  0  0"/>
+            <mass value="6.4064"/>
+            <inertia ixx="0.16297" ixy="1.2769e-05" ixz="-0.012639" iyy="0.16253" iyz="0.00075292" izz="0.015197"/>
+        </inertial>
+        <visual>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/RCalfRot.STL"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/RCalfRot.STL"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="RightAnkleFlex">
+        <inertial>
+            <origin xyz="0.10913    0.028199   -0.088328" rpy="0  0  0"/>
+            <mass value="3.6355"/>
+            <inertia ixx="0.064699" ixy="0.01546" ixz="-0.045672" iyy="0.098665" iyz="-0.0141" izz="0.075813"/>
+        </inertial>
+        <visual>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/RAnkFlex.STL"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/RAnkFlex.STL"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="TorsoTilt">
+        <inertial>
+            <origin xyz="0.1087 -0.00034302    0.047587" rpy="0  0  0"/>
+            <mass value="4.5068"/>
+            <inertia ixx="0.017024" ixy="-0.00022245" ixz="0.028025" iyy="0.11025" iyz="-8.1499e-05" izz="0.10014"/>
+        </inertial>
+        <visual>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/TorsoTilt.STL"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/TorsoTilt.STL"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="TorsoRotate">
+        <inertial>
+            <origin xyz="-0.0011759  -0.0059791    -0.10144" rpy="0  0  0"/>
+            <mass value="28.9743"/>
+            <inertia ixx="0.65903" ixy="0.0015581" ixz="0.0025619" iyy="1.2457" iyz="0.0081245" izz="0.75075"/>
+        </inertial>
+        <visual>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/TorsoRot.STL"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/TorsoRot.STL"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="LeftShoulderAbAd">
+        <inertial>
+            <origin xyz="0.016894   0.0081736     0.16659" rpy="0  0  0"/>
+            <mass value="4.7988"/>
+            <inertia ixx="0.16868" ixy="0.0019999" ixz="0.011486" iyy="0.16956" iyz="0.0032115" izz="0.012504"/>
+        </inertial>
+        <visual>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/LShAbAd.STL"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/LShAbAd.STL"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="LeftShoulderFlex">
+        <inertial>
+            <origin xyz="0.065454    0.014739   -0.020557" rpy="0  0  0"/>
+            <mass value="1.8778"/>
+            <inertia ixx="0.0040493" ixy="0.0025907" ixz="-0.0031001" iyy="0.014914" iyz="-0.00069841" izz="0.014382"/>
+        </inertial>
+        <visual>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/LShFlex.STL"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/LShFlex.STL"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="LeftHumeralRotate">
+        <inertial>
+            <origin xyz="0.00061558  -0.0011451   -0.071123" rpy="0  0  0"/>
+            <mass value="6.1167"/>
+            <inertia ixx="0.067171" ixy="0.00022667" ixz="0.0015442" iyy="0.066472" iyz="0.0011348" izz="0.012664"/>
+        </inertial>
+        <visual>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/LHumRot.STL"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/LHumRot.STL"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="LeftElbowFlex">
+        <inertial>
+            <origin xyz="0.13007   -0.012932    0.018987" rpy="0  0  0"/>
+            <mass value="1.3066"/>
+            <inertia ixx="0.0026071" ixy="-0.0015771" ixz="0.0063884" iyy="0.051243" iyz="-0.00058979" izz="0.050324"/>
+        </inertial>
+        <visual>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/LElbFlex.STL"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/LElbFlex.STL"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="LeftWristRotate">
+        <inertial>
+            <origin xyz="0.070282   0.0004064    -0.06411" rpy="0  0  0"/>
+            <mass value="3.1665"/>
+            <inertia ixx="0.021994" ixy="0.00017617" ixz="-0.017203" iyy="0.053238" iyz="-5.4724e-05" izz="0.037834"/>
+        </inertial>
+        <visual>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/LWriRot.STL"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/LWriRot.STL"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="RightShoulderAbAd">
+        <inertial>
+            <origin xyz="0.016805   0.0082452     -0.1666" rpy="0  0  0"/>
+            <mass value="4.8022"/>
+            <inertia ixx="0.16879" ixy="0.0019785" ixz="-0.011395" iyy="0.16969" iyz="-0.0032978" izz="0.012483"/>
+        </inertial>
+        <visual>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/RShAbAd.STL"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/RShAbAd.STL"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="RightShoulderFlex">
+        <inertial>
+            <origin xyz="0.065468     0.01475      0.0206" rpy="0  0  0"/>
+            <mass value="1.8778"/>
+            <inertia ixx="0.0040545" ixy="0.0025924" ixz="0.0031073" iyy="0.014922" iyz="0.00069995" izz="0.014385"/>
+        </inertial>
+        <visual>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/RShFlex.STL"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/RShFlex.STL"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="RightHumeralRotate">
+        <inertial>
+            <origin xyz="0.0005394  -0.0010519    0.071148" rpy="0  0  0"/>
+            <mass value="6.1126"/>
+            <inertia ixx="0.066997" ixy="0.0002559" ixz="-0.001538" iyy="0.066314" iyz="-0.0010174" izz="0.012647"/>
+        </inertial>
+        <visual>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/RHumRot.STL"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/RHumRot.STL"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="RightElbowFlex">
+        <inertial>
+            <origin xyz="0.13005   -0.012948   -0.018988" rpy="0  0  0"/>
+            <mass value="1.3064"/>
+            <inertia ixx="0.002607" ixy="-0.0015818" ixz="-0.0063873" iyy="0.051223" iyz="0.00059038" izz="0.050303"/>
+        </inertial>
+        <visual>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/RElbFlex.STL"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/RElbFlex.STL"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="RightWristRotate">
+        <inertial>
+            <origin xyz="0.070862 -0.00026733    0.064914" rpy="0  0  0"/>
+            <mass value="3.1445"/>
+            <inertia ixx="0.021814" ixy="-5.0943e-05" ixz="0.017225" iyy="0.053342" iyz="-5.3891e-05" izz="0.037817"/>
+        </inertial>
+        <visual>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/RWriRot.STL"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <geometry>
+                <mesh filename="package://x0_a4_meshes/RWriRot.STL"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="PelvisLoadCell">
+        <inertial>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <mass value="0"/>
+            <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+        </inertial>
+    </link>
+    <link name="LeftFootLoadCell">
+        <inertial>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <mass value="0"/>
+            <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+        </inertial>
+    </link>
+    <link name="RightFootLoadCell">
+        <inertial>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <mass value="0"/>
+            <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+        </inertial>
+    </link>
+    <link name="TorsoLoadCell">
+        <inertial>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <mass value="0"/>
+            <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+        </inertial>
+    </link>
+    <link name="LeftHandleLoadCell">
+        <inertial>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <mass value="0"/>
+            <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+        </inertial>
+    </link>
+    <link name="RightHandleLoadCell">
+        <inertial>
+            <origin xyz="0  0  0" rpy="0  0  0"/>
+            <mass value="0"/>
+            <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+        </inertial>
+    </link>
+    <joint name="PelvisLoadCell" type="fixed">
+        <origin xyz="0.0635           0   -0.037465" rpy="0     -1.5708     -1.5708"/>
+        <parent link="BaseRotZ"/>
+        <child link="PelvisLoadCell"/>
+        <axis xyz="0  0  1"/>
+    </joint>
+    <joint name="LeftHipRotate" type="revolute">
+        <origin xyz="0     0.09525           0" rpy="-1.5708           0     -1.5708"/>
+        <parent link="BaseRotZ"/>
+        <child link="LeftHipRotate"/>
+        <axis xyz="0  0  1"/>
+        <limit lower="-0.17453" upper="0.5236" effort="1000" velocity="10"/>
+        <dynamics damping="10"/>
+    </joint>
+    <joint name="RightHipRotate" type="revolute">
+        <origin xyz="0    -0.09525           0" rpy="-1.5708           0      1.5708"/>
+        <parent link="BaseRotZ"/>
+        <child link="RightHipRotate"/>
+        <axis xyz="0  0  1"/>
+        <limit lower="-0.17453" upper="0.5236" effort="1000" velocity="10"/>
+        <dynamics damping="10"/>
+    </joint>
+    <joint name="TorsoTilt" type="revolute">
+        <origin xyz="0.09525           0           0" rpy="0  0  0"/>
+        <parent link="BaseRotZ"/>
+        <child link="TorsoTilt"/>
+        <axis xyz="0  0  1"/>
+        <limit lower="-0.34907" upper="0.34907" effort="1000" velocity="10"/>
+        <dynamics damping="10"/>
+    </joint>
+    <joint name="LeftHipAbAd" type="revolute">
+        <origin xyz="-0.1016           0           0" rpy="-1.5708      3.1416           0"/>
+        <parent link="LeftHipRotate"/>
+        <child link="LeftHipAbAd"/>
+        <axis xyz="0  0  1"/>
+        <limit lower="-0.5236" upper="0.5236" effort="1000" velocity="10"/>
+        <dynamics damping="10"/>
+    </joint>
+    <joint name="LeftHipFlex" type="revolute">
+        <origin xyz="0.079324           0     0.22225" rpy="1.5708           0     -1.5708"/>
+        <parent link="LeftHipAbAd"/>
+        <child link="LeftHipFlex"/>
+        <axis xyz="0  0  1"/>
+        <limit lower="-0.43633" upper="2.5307" effort="1000" velocity="10"/>
+        <dynamics damping="10"/>
+    </joint>
+    <joint name="LeftKneeFlex" type="revolute">
+        <origin xyz="0.4318           0           0" rpy="0  0  0"/>
+        <parent link="LeftHipFlex"/>
+        <child link="LeftKneeFlex"/>
+        <axis xyz="0  0  1"/>
+        <limit lower="-2.1817" upper="0" effort="1000" velocity="10"/>
+        <dynamics damping="10"/>
+    </joint>
+    <joint name="LeftCalfRotate" type="revolute">
+        <origin xyz="0.1524           0           0" rpy="0     -1.5708           0"/>
+        <parent link="LeftKneeFlex"/>
+        <child link="LeftCalfRotate"/>
+        <axis xyz="0  0  1"/>
+        <limit lower="-0.7854" upper="0.7854" effort="1000" velocity="10"/>
+        <dynamics damping="10"/>
+    </joint>
+    <joint name="LeftAnkleFlex" type="revolute">
+        <origin xyz="0           0     -0.2794" rpy="0      1.5708           0"/>
+        <parent link="LeftCalfRotate"/>
+        <child link="LeftAnkleFlex"/>
+        <axis xyz="0  0  1"/>
+        <limit lower="-0.7854" upper="1.0472" effort="1000" velocity="10"/>
+        <dynamics damping="10"/>
+    </joint>
+    <joint name="LeftFootLoadCell" type="fixed">
+        <origin xyz="0.14702    0.036703     0.13454" rpy="1.5708    0.034907           0"/>
+        <parent link="LeftAnkleFlex"/>
+        <child link="LeftFootLoadCell"/>
+        <axis xyz="0  0  1"/>
+    </joint>
+    <joint name="RightHipAbAd" type="revolute">
+        <origin xyz="-0.1016           0           0" rpy="1.5708      3.1416           0"/>
+        <parent link="RightHipRotate"/>
+        <child link="RightHipAbAd"/>
+        <axis xyz="0  0  1"/>
+        <limit lower="-0.5236" upper="0.5236" effort="1000" velocity="10"/>
+        <dynamics damping="10"/>
+    </joint>
+    <joint name="RightHipFlex" type="revolute">
+        <origin xyz="0.079324           0    -0.22225" rpy="-1.5708           0     -1.5708"/>
+        <parent link="RightHipAbAd"/>
+        <child link="RightHipFlex"/>
+        <axis xyz="0  0  1"/>
+        <limit lower="-0.43633" upper="2.5307" effort="1000" velocity="10"/>
+        <dynamics damping="10"/>
+    </joint>
+    <joint name="RightKneeFlex" type="revolute">
+        <origin xyz="0.4318           0           0" rpy="0  0  0"/>
+        <parent link="RightHipFlex"/>
+        <child link="RightKneeFlex"/>
+        <axis xyz="0  0  1"/>
+        <limit lower="-2.1817" upper="0" effort="1000" velocity="10"/>
+        <dynamics damping="10"/>
+    </joint>
+    <joint name="RightCalfRotate" type="revolute">
+        <origin xyz="0.1524           0           0" rpy="0      1.5708           0"/>
+        <parent link="RightKneeFlex"/>
+        <child link="RightCalfRotate"/>
+        <axis xyz="0  0  1"/>
+        <limit lower="-0.7854" upper="0.7854" effort="1000" velocity="10"/>
+        <dynamics damping="10"/>
+    </joint>
+    <joint name="RightAnkleFlex" type="revolute">
+        <origin xyz="0           0      0.2794" rpy="0     -1.5708           0"/>
+        <parent link="RightCalfRotate"/>
+        <child link="RightAnkleFlex"/>
+        <axis xyz="0  0  1"/>
+        <limit lower="-0.7854" upper="1.0472" effort="1000" velocity="10"/>
+        <dynamics damping="10"/>
+    </joint>
+    <joint name="RightFootLoadCell" type="fixed">
+        <origin xyz="0.14702    0.036703    -0.13454" rpy="1.5708   -0.034907           0"/>
+        <parent link="RightAnkleFlex"/>
+        <child link="RightFootLoadCell"/>
+        <axis xyz="0  0  1"/>
+    </joint>
+    <joint name="TorsoRotate" type="revolute">
+        <origin xyz="0.2286           0    0.060401" rpy="-1.5708           0      1.5708"/>
+        <parent link="TorsoTilt"/>
+        <child link="TorsoRotate"/>
+        <axis xyz="0  0  1"/>
+        <limit lower="-0.34907" upper="0.34907" effort="1000" velocity="10"/>
+        <dynamics damping="10"/>
+    </joint>
+    <joint name="TorsoLoadCell" type="fixed">
+        <origin xyz="0     0.06383    -0.12992" rpy="-1.5708           0     -1.5708"/>
+        <parent link="TorsoRotate"/>
+        <child link="TorsoLoadCell"/>
+        <axis xyz="0  0  1"/>
+    </joint>
+    <joint name="LeftShoulderAbAd" type="revolute">
+        <origin xyz="0.31432           0   -0.045212" rpy="-2.2689           0           0"/>
+        <parent link="TorsoRotate"/>
+        <child link="LeftShoulderAbAd"/>
+        <axis xyz="0  0  1"/>
+        <limit lower="-0.17453" upper="2.0944" effort="1000" velocity="10"/>
+        <dynamics damping="10"/>
+    </joint>
+    <joint name="RightShoulderAbAd" type="revolute">
+        <origin xyz="-0.31432           0   -0.045212" rpy="-0.87266           0      3.1416"/>
+        <parent link="TorsoRotate"/>
+        <child link="RightShoulderAbAd"/>
+        <axis xyz="0  0  1"/>
+        <limit lower="-0.17453" upper="2.0944" effort="1000" velocity="10"/>
+        <dynamics damping="10"/>
+    </joint>
+    <joint name="LeftShoulderFlex" type="revolute">
+        <origin xyz="0     -0.0508     0.32614" rpy="1.5708     0.69813     -1.5708"/>
+        <parent link="LeftShoulderAbAd"/>
+        <child link="LeftShoulderFlex"/>
+        <axis xyz="0  0  1"/>
+        <limit lower="-0.47647" upper="2.0944" effort="1000" velocity="10"/>
+        <dynamics damping="10"/>
+    </joint>
+    <joint name="LeftHumeralRotate" type="revolute">
+        <origin xyz="0.15441    0.016358   -0.024638" rpy="0     -1.5708   -0.087266"/>
+        <parent link="LeftShoulderFlex"/>
+        <child link="LeftHumeralRotate"/>
+        <axis xyz="0  0  1"/>
+        <limit lower="-1.3963" upper="0.87266" effort="1000" velocity="10"/>
+        <dynamics damping="10"/>
+    </joint>
+    <joint name="LeftElbowFlex" type="revolute">
+        <origin xyz="0           0    -0.18923" rpy="1.5708      1.4835      1.5708"/>
+        <parent link="LeftHumeralRotate"/>
+        <child link="LeftElbowFlex"/>
+        <axis xyz="0  0  1"/>
+        <limit lower="0" upper="2.6704" effort="1000" velocity="10"/>
+        <dynamics damping="10"/>
+    </joint>
+    <joint name="LeftWristRotate" type="revolute">
+        <origin xyz="0.3429   -0.006096     0.03683" rpy="0     -1.5708           0"/>
+        <parent link="LeftElbowFlex"/>
+        <child link="LeftWristRotate"/>
+        <axis xyz="0  0  1"/>
+        <limit lower="-1.5708" upper="1.5708" effort="1000" velocity="10"/>
+        <dynamics damping="10"/>
+    </joint>
+    <joint name="LeftHandleLoadCell" type="fixed">
+        <origin xyz="0.1524           0   -0.083388" rpy="0      1.5708     -1.5708"/>
+        <parent link="LeftWristRotate"/>
+        <child link="LeftHandleLoadCell"/>
+        <axis xyz="0  0  1"/>
+    </joint>
+    <joint name="RightShoulderFlex" type="revolute">
+        <origin xyz="0     -0.0508    -0.32614" rpy="1.5708     -2.4435      1.5708"/>
+        <parent link="RightShoulderAbAd"/>
+        <child link="RightShoulderFlex"/>
+        <axis xyz="0  0  1"/>
+        <limit lower="-0.47647" upper="2.0944" effort="1000" velocity="10"/>
+        <dynamics damping="10"/>
+    </joint>
+    <joint name="RightHumeralRotate" type="revolute">
+        <origin xyz="0.15441    0.016358    0.024638" rpy="0      1.5708   -0.087266"/>
+        <parent link="RightShoulderFlex"/>
+        <child link="RightHumeralRotate"/>
+        <axis xyz="0  0  1"/>
+        <limit lower="-1.3963" upper="0.87266" effort="1000" velocity="10"/>
+        <dynamics damping="10"/>
+    </joint>
+    <joint name="RightElbowFlex" type="revolute">
+        <origin xyz="0           0     0.18923" rpy="-1.5708     -1.4835      1.5708"/>
+        <parent link="RightHumeralRotate"/>
+        <child link="RightElbowFlex"/>
+        <axis xyz="0  0  1"/>
+        <limit lower="0" upper="2.6704" effort="1000" velocity="10"/>
+        <dynamics damping="10"/>
+    </joint>
+    <joint name="RightWristRotate" type="revolute">
+        <origin xyz="0.3429   -0.006096    -0.03683" rpy="0      1.5708           0"/>
+        <parent link="RightElbowFlex"/>
+        <child link="RightWristRotate"/>
+        <axis xyz="0  0  1"/>
+        <limit lower="-1.5708" upper="1.5708" effort="1000" velocity="10"/>
+        <dynamics damping="10"/>
+    </joint>
+    <joint name="RightHandleLoadCell" type="fixed">
+        <origin xyz="0.1524           0    0.083388" rpy="0     -1.5708      1.5708"/>
+        <parent link="RightWristRotate"/>
+        <child link="RightHandleLoadCell"/>
+        <axis xyz="0  0  1"/>
+    </joint>
+    
+</robot>

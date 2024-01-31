@@ -1,0 +1,656 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot name="Robot">
+ <material name="Blue">
+    <color rgba="0.0 0.0 0.8 1.0"/>
+  </material>
+    <link  name="World">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0  0  0"/>
+            <mass value="0.00001"/>
+            <inertia ixx="1e-06" ixy="0" ixz="0" iyy="1e-06" iyz="0" izz="1e-06"/>
+        </inertial>
+    </link>
+	<joint name="Base" type="fixed">
+        <origin xyz="0 0 0" rpy="0 -1.5708 0"/>
+        <parent link="World"/>
+        <child link="Base"/>
+        <axis xyz="0 0 1"/>
+    </joint>
+	
+	<link name="Base">
+        <inertial>
+            <origin xyz="0.044247472	1.94046E-05	0.002626117" rpy="0  0  0"/>
+            <mass value="8.846932199"/>
+            <inertia ixx="0.109451309" ixy="6.75065E-06" ixz="-0.000979396" iyy="0.079623895" iyz="-0.000241037" izz="0.07525338"/>
+        </inertial>
+         <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/ROBOT-BASE.stl"/>
+            </geometry>
+            <material name="Blue"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/ROBOT-BASE.stl"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="TorsoRotate">
+        <inertial>
+            <origin xyz="-0.001311529	-0.002916404	-0.201077261" rpy="0 0 0"/>
+            <mass value="21.06625187"/>
+            <inertia ixx="0.401099262" ixy="-0.000201111" ixz="-0.006167758" iyy="0.414472813" iyz="-0.025802353" izz="0.118399062"/>
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/TORSO-ROTATE.stl"/>
+            </geometry>
+            <material name="Blue"/>
+        </visual>
+		<collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/TORSO-ROTATE.stl"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="TorsoForebend">
+        <inertial>
+            <origin xyz="0.34266538	0.000705837	-0.0001307" rpy="0 0 0"/>
+            <mass value="39.22278732"/>
+            <inertia ixx="1.631250184" ixy="-0.401451897" ixz="-0.015442231" iyy="1.815086804" iyz="-0.01931368" izz="1.438529691"/>
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+				<mesh filename="../meshes/TORSO-FOREBEND-NO-HEAD.stl"/>
+            </geometry>
+            <material name="Blue"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/TORSO-FOREBEND-NO-HEAD.stl"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="LeftShoulderAbAd">
+        <inertial>
+            <origin xyz="0.013557095	-0.026984831	0.204447966" rpy="0  0  0"/>
+            <mass value="8.927639767"/>
+            <inertia ixx="0.174048261" ixy="0.00157183" ixz="-0.009208313" iyy="0.161751494" iyz="0.026082344" izz="0.033599817"/>
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/LEFT-SHOULDER-AA.stl"/>
+            </geometry>
+            <material name="Blue"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/LEFT-SHOULDER-AA.stl"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="LeftShoulderFlex">
+        <inertial>
+            <origin xyz="0.100958358	0.002840005	0.015566953" rpy="0  0  0"/>
+            <mass value="6.105277609"/>
+            <inertia ixx="0.020426157" ixy="-0.00020909" ixz="0.008847971" iyy="0.052066105" iyz="0.000143604" izz="0.051688277"/>
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/LEFT-SHOULDER-FE.stl"/>
+            </geometry>
+            <material name="Blue"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/LEFT-SHOULDER-FE.stl"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="LeftHumeralRotate">
+        <inertial>
+            <origin xyz="-0.014774634	0.001218668	-0.150806432" rpy="0  0  0"/>
+            <mass value="7.566540733"/>
+            <inertia ixx="0.050950485" ixy="0.000155866" ixz="-0.003479027" iyy="0.047691305" iyz="-0.000773739" izz="0.022130391"/>
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/LEFT-HUMERAL-ROTATE.stl"/>
+            </geometry>
+            <material name="Blue"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/LEFT-HUMERAL-ROTATE.stl"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="LeftElbowFlex">
+        <inertial>
+            <origin xyz="-0.007523008	-0.070597573	0.035696641" rpy="0  0  0"/>
+            <mass value="4.650729203"/>
+            <inertia ixx="0.035874145" ixy="-0.005560818" ixz="-0.000237933" iyy="0.018648212" iyz="-0.001519356" izz="0.042905156"/>
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/LEFT-ELBOW-FE.stl"/>
+            </geometry>
+            <material name="Blue"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/LEFT-ELBOW-FE.stl"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="LeftWristRotate">
+        <inertial>
+            <origin xyz="0.009486683	0.000602678	-0.169120431" rpy="0  0  0"/>
+            <mass value="5.710374998"/>
+            <inertia ixx="0.060763205" ixy="6.9111E-05" ixz="0.000685581" iyy="0.059578256" iyz="0.000520987" izz="0.014832511"/>
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/LEFT-WRIST-ROTATE.stl"/>
+            </geometry>
+            <material name="Blue"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/LEFT-WRIST-ROTATE.stl"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="LeftWristAbAd">
+        <inertial>
+            <origin xyz="-0.000167093	7.23161E-05	0.000929079" rpy="0  0  0"/>
+            <mass value="0.148244523"/>
+            <inertia ixx="6.63458E-05" ixy="-1.10419E-07" ixz="-3.03679E-08" iyy="0.000111392" iyz="-5.1064E-08" izz="5.15253E-05"/>
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/LEFT-WRIST-AA.stl"/>
+            </geometry>
+            <material name="Blue"/>
+        </visual>
+		<visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <sphere radius="0.09"/>
+            </geometry>
+            <material name="Blue"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/LEFT-WRIST-AA.stl"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="LeftWristFlex">
+        <inertial>
+            <origin xyz="0.061567992	-0.013779615	-0.00382928" rpy="0  0  0"/>
+            <mass value="1.85788026"/>
+            <inertia ixx="0.003554687" ixy="0.00029455" ixz="0.000423875" iyy="0.003470532" iyz="-0.000113906" izz="0.003057123"/>
+        </inertial>
+	    <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/LEFT-WRIST-FE.stl"/>
+            </geometry>
+            <material name="Blue"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/LEFT-WRIST-FE.stl"/>
+            </geometry>
+        </collision>
+    </link>
+	
+	<link name="RightShoulderAbAd">
+        <inertial>
+            <origin xyz="0.013170693	-0.026793536	-0.203765932" rpy="0  0  0"/>
+            <mass value="8.863604295"/>
+            <inertia ixx="0.173468" ixy="0.001469" ixz="0.008916" iyy="0.160877" iyz="-0.025927" izz="0.033279"/>
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/RIGHT-SHOULDER-AA.stl"/>
+            </geometry>
+            <material name="Blue"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0.02 -0.11 " rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/RIGHT-SHOULDER-AA.stl"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="RightShoulderFlex">
+        <inertial>
+            <origin xyz="0.10087468	0.00229413	-0.01547047" rpy="0  0  0"/>
+            <mass value="6.069601667"/>
+            <inertia ixx="0.020162" ixy="-0.000179" ixz="-0.008862" iyy="0.052042" iyz="-0.000212" izz="0.051431"/>
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/RIGHT-SHOULDER-FE.stl"/>
+            </geometry>
+            <material name="Blue"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/RIGHT-SHOULDER-FE.stl"/>
+            </geometry>
+        </collision>
+       
+    </link>
+    <link name="RightHumeralRotate">
+        <inertial>
+            <origin xyz="-0.014772652	0.001174821	0.150834069" rpy="0  0  0"/>
+            <mass value="7.570371407"/>
+            <inertia ixx="0.050939" ixy="0.000170" ixz="0.003481" iyy="0.047702" iyz="0.000746" izz="0.022114"/>
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/RIGHT-HUMERAL-ROTATE.stl"/>
+            </geometry>
+            <material name="Blue"/>
+        </visual>
+        <collision>
+            <origin xyz="0.01 0.015 0.01" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/RIGHT-HUMERAL-ROTATE.stl"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="RightElbowFlex">
+        <inertial>
+            <origin xyz="-0.020971995	-0.124532014	-0.0350892" rpy="0  0  0"/>
+            <mass value="2.639209855"/>
+            <inertia ixx="0.012215" ixy="-0.001076" ixz="0.000243" iyy="0.010864" iyz="0.001263" izz="0.017122"/>
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/RIGHT-ELBOW-FE.stl"/>
+            </geometry>
+            <material name="Blue"/>
+        </visual>
+        <collision>
+            <origin xyz="-0.03 -0.1016 -0.030861" rpy="0 1.570796326794897 0"/>
+            <geometry>
+                <mesh filename="../meshes/RIGHT-ELBOW-FE.stl"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="RightWristRotate">
+        <inertial>
+            <origin xyz="0.010123432	0.00062536	0.169873841" rpy="0  0  0"/>
+            <mass value="5.691299942"/>
+            <inertia ixx="0.061259" ixy="-0.000023" ixz="-0.000702" iyy="0.059854" iyz="-0.000490" izz="0.014438"/>
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/RIGHT-WRIST-ROTATE.stl"/>
+            </geometry>
+            <material name="Blue"/>
+        </visual>
+        <collision>
+            <origin xyz="0.01 0.01 0.22" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/RIGHT-WRIST-ROTATE.stl"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="RightWristAbAd">
+        <inertial>
+            <origin xyz="-0.000167093	-7.23161E-05	-0.000929079" rpy="0  0  0"/>
+            <mass value="0.148244523"/>
+            <inertia ixx="0.000066" ixy="0.000000" ixz="0.000000" iyy="0.000111" iyz="0.000000" izz="0.000052"/>
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/RIGHT-WRIST-AA.stl"/>
+            </geometry>
+            <material name="Blue"/>
+        </visual>
+		<visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <sphere radius="0.09"/>
+            </geometry>
+            <material name="Blue"/>
+        </visual>
+		
+		
+		<collision>
+            <origin xyz="0.01 0.01 0.22" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/RIGHT-WRIST-AA.stl"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="RightWristFlex">
+        <inertial>
+            <origin xyz="0.061531133	-0.013737052	0.003814063" rpy="0  0  0"/>
+            <mass value="1.856934425"/>
+            <inertia ixx="0.003552" ixy="0.000291" ixz="-0.000425" iyy="0.003464" iyz="0.000118" izz="0.003051"/>
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/RIGHT-WRIST-FE.stl"/>
+            </geometry>
+            <material name="Blue"/>
+        </visual>
+		<collision>
+            <origin xyz="0.01 0.01 0.22" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/RIGHT-WRIST-FE.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+	<link name="LeftLoadPointA">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0  0  0"/>
+            <mass value="0.00001"/>
+            <inertia ixx="1e-06" ixy="0" ixz="0" iyy="1e-06" iyz="0" izz="1e-06"/>
+        </inertial>
+    </link>
+    <link name="LeftLoadPointB">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0  0  0"/>
+            <mass value="0.00001"/>
+            <inertia ixx="1e-06" ixy="0" ixz="0" iyy="1e-06" iyz="0" izz="1e-06"/>
+        </inertial>
+    </link>
+	<link name="LeftWrist6DOFLC_noHand">
+        <inertial>
+            <origin xyz="0.026078192	-1.21056E-06	1.35611E-06" rpy="0  0  0"/>
+            <mass value="0.480112873"/>
+            <inertia ixx="0.000510" ixy="0.000000" ixz="0.000000" iyy="0.000294" iyz="0.000000" izz="0.000290"/>
+        </inertial>
+		<visual>
+            <origin xyz=" 0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/RIGHT-AND-LEFT-QUICKDISCONNECT.stl"/>
+            </geometry>
+            <material name="Blue"/>
+        </visual>
+		<collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/RIGHT-AND-LEFT-QUICKDISCONNECT.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <link name="RightLoadPointA">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0  0  0"/>
+            <mass value="0.00001"/>
+            <inertia ixx="1e-06" ixy="0" ixz="0" iyy="1e-06" iyz="0" izz="1e-06"/>
+        </inertial>
+    </link>
+    <link name="RightLoadPointB">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0  0  0"/>
+            <mass value="0.00001"/>
+            <inertia ixx="1e-06" ixy="0" ixz="0" iyy="1e-06" iyz="0" izz="1e-06"/>
+        </inertial>
+    </link>
+	<link name="RightWrist6DOFLC_noHand">
+        <inertial>
+            <origin xyz="0.026078192	1.21056E-06	-1.35611E-06" rpy="0  0  0"/>
+            <mass value="0.480112873"/>
+            <inertia ixx="0.000510" ixy="0.000000" ixz="0.000000" iyy="0.000294" iyz="0.000000" izz="0.000290"/>
+        </inertial>
+		<visual>
+            <origin xyz=" 0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/RIGHT-AND-LEFT-QUICKDISCONNECT.stl"/>
+            </geometry>
+            <material name="Blue"/>
+        </visual>
+		<collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/RIGHT-AND-LEFT-QUICKDISCONNECT.stl"/>
+            </geometry>
+        </collision>
+
+    </link>
+	
+    <joint name="TorsoRotate" type="revolute">
+        <origin xyz="0.05712 0 0 " rpy="-1.570796326794897 0 1.570796326794897"/>
+        <parent link="Base"/>
+        <child link="TorsoRotate"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="-2.356" upper="2.356" effort="129.9" velocity="9.07" rms="50.8"/>
+    </joint>
+    <joint name="TorsoForebend" type="revolute">
+        <origin xyz="0 0 -0.29718" rpy="0 1.570796326794897 0"/>
+        <parent link="TorsoRotate"/>
+        <child link="TorsoForebend"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="0" upper="0.5236" effort="842.87" velocity="0.09" rms="497.1"/>
+    </joint>
+
+	<joint name="LeftShoulderAbAd" type="revolute">
+        <origin xyz="0.343154 -0.053594 0.27305" rpy="-2.268928027592628 -1.570796326794897 0"/>
+        <parent link="TorsoForebend"/>
+        <child link="LeftShoulderAbAd"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="-0.1745" upper="1.9199" effort="259.86" velocity="6.8" rms="151.06"/>
+    </joint>
+    <joint name="LeftShoulderFlex" type="revolute">
+        <origin xyz="0 -0.0508 0.29388" rpy="1.570796326794897 0.69813 -1.570796326794897"/>
+        <parent link="LeftShoulderAbAd"/>
+        <child link="LeftShoulderFlex"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="-0.47124" upper="2.0944" effort="519.7" velocity="4.26" rms="313.76"/>
+    </joint>
+    <joint name="LeftHumeralRotate" type="revolute">
+        <origin xyz="0.159385 0 0" rpy="0 -1.570796326794897 0"/>
+        <parent link="LeftShoulderFlex"/>
+        <child link="LeftHumeralRotate"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="-1.3963" upper="0.69813" effort="259.86" velocity="6.8" rms="151.06"/>
+    </joint>
+    <joint name="LeftElbowFlex" type="revolute">
+        <origin xyz="0 0 -0.188214" rpy="0 1.570796326794897 0"/>
+        <parent link="LeftHumeralRotate"/>
+        <child link="LeftElbowFlex"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="0.087266" upper="2.618" effort="519.7" velocity="4.26" rms="313.76"/>
+    </joint>
+    <joint name="LeftWristRotate" type="revolute">
+        <origin xyz="0 -0.1397 0.03086" rpy="0 -1.570796326794897 0"/>
+        <parent link="LeftElbowFlex"/>
+        <child link="LeftWristRotate"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="-3.14159" upper="0" effort="111.85" velocity="4.24" rms="67.79"/>
+    </joint>
+    <joint name="LeftWristAbAd" type="revolute">
+        <origin xyz="0 0 -0.327406" rpy="1.570796326794897 0 -3.1416"/>
+        <parent link="LeftWristRotate"/>
+        <child link="LeftWristAbAd"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="-0.52359" upper="0.26179" effort="293.76" velocity="3.68" rms="255.23"/>
+    </joint>
+    <joint name="LeftWristFlex" type="revolute">
+        <origin xyz="0 0 0" rpy="1.570796326794897 0 -1.570796326794897"/>
+        <parent link="LeftWristAbAd"/>
+        <child link="LeftWristFlex"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="-0.5236" upper="0.87266" effort="293.76" velocity="3.68" rms="255.23"/>
+    </joint>
+
+	<joint name="RightShoulderAbAd" type="revolute">
+        <origin xyz="0.343154 -0.053594 -0.27305" rpy="2.268928027592628 1.570796326794897 0"/>
+        <parent link="TorsoForebend"/>
+        <child link="RightShoulderAbAd"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="-0.1745" upper="1.9199" effort="259.86" velocity="6.8" rms="151.06"/>
+    </joint>
+    <joint name="RightShoulderFlex" type="revolute">
+        <origin xyz="0 -0.0508 -0.29388" rpy="-1.570796326794897 -0.69813 -1.570796326794897"/>
+        <parent link="RightShoulderAbAd"/>
+        <child link="RightShoulderFlex"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="-0.47124" upper="2.0944" effort="519.7" velocity="4.26" rms="313.76"/>
+    </joint>
+    <joint name="RightHumeralRotate" type="revolute">
+        <origin xyz="0.159385 0 0" rpy="0 1.570796326794897 0"/>
+        <parent link="RightShoulderFlex"/>
+        <child link="RightHumeralRotate"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="-1.3963" upper="0.69813" effort="259.86" velocity="6.8" rms="151.06"/>
+    </joint>
+    <joint name="RightElbowFlex" type="revolute">
+        <origin xyz="0 0 0.188214" rpy="0 -1.570796326794897 0"/>
+        <parent link="RightHumeralRotate"/>
+        <child link="RightElbowFlex"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="0.087266" upper="2.618" effort="519.7" velocity="4.26" rms="313.76"/>
+    </joint>
+    <joint name="RightWristRotate" type="revolute">
+        <origin xyz="0 -0.1397 -0.03086" rpy="0 1.570796326794897 0"/>
+        <parent link="RightElbowFlex"/>
+        <child link="RightWristRotate"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="-3.14159" upper="0" effort="111.85" velocity="4.24" rms="67.79"/>
+    </joint>
+    <joint name="RightWristAbAd" type="revolute">
+        <origin xyz="0 0 0.327406" rpy="-1.570796326794897 0 3.1416"/>
+        <parent link="RightWristRotate"/>
+        <child link="RightWristAbAd"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="-0.52359" upper="0.26179" effort="293.76" velocity="3.68" rms="255.23"/>
+    </joint>
+    <joint name="RightWristFlex" type="revolute">
+        <origin xyz="0 0 0" rpy="-1.570796326794897 0 -1.570796326794897"/>
+        <parent link="RightWristAbAd"/>
+        <child link="RightWristFlex"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="-0.5236" upper="0.87266" effort="293.76" velocity="3.68" rms="255.23"/>
+    </joint>
+    
+	<joint name="LeftWrist6DOFLC_noHand" type="fixed">
+        <origin xyz=" 0.08128 -0.01905 -0.010668" rpy="1.5708 0 0"/>
+        <parent link="LeftWristFlex"/>
+        <child link="LeftWrist6DOFLC_noHand"/>
+        <axis xyz="0 0 1"/>
+    </joint>
+	<joint name="LeftLoadPointA" type="fixed">
+        <origin xyz="0.244221 0 -0.058674" rpy="-1.570796326794897 0 0"/>
+        <parent link="LeftWrist6DOFLC_noHand"/>
+        <child link="LeftLoadPointA"/>
+        <axis xyz="0 0 1"/>
+    </joint>
+	<joint name="LeftLoadPointB" type="fixed">
+        <origin xyz=" 0.257302 0 -0.01905" rpy="-1.570796326794897 0 0"/>
+        <parent link="LeftWrist6DOFLC_noHand"/>
+        <child link="LeftLoadPointB"/>
+        <axis xyz="0 0 1"/>
+    </joint>
+
+	<joint name="RightWrist6DOFLC_noHand" type="fixed">
+        <origin xyz=" 0.08128 -0.01905 0.010668" rpy="-1.5708 0 0"/>
+        <parent link="RightWristFlex"/>
+        <child link="RightWrist6DOFLC_noHand"/>
+        <axis xyz="0 0 1"/>
+    </joint>
+	<joint name="RightLoadPointA" type="fixed">
+        <origin xyz="0.244221 0 0.058674" rpy="1.570796326794897 0 0"/>
+        <parent link="RightWrist6DOFLC_noHand"/>
+        <child link="RightLoadPointA"/>
+        <axis xyz="0 0 1"/>
+    </joint>
+	<joint name="RightLoadPointB" type="fixed">
+        <origin xyz=" 0.257302 0 0.01905" rpy="1.570796326794897 0 0"/>
+        <parent link="RightWrist6DOFLC_noHand"/>
+        <child link="RightLoadPointB"/>
+        <axis xyz="0 0 1"/>
+    </joint>
+	    
+	<link name="CameraPan">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0  0  0"/>
+            <mass value="0.00001"/>
+            <inertia ixx="1e-06" ixy="0" ixz="0" iyy="1e-06" iyz="0" izz="1e-06"/>
+        </inertial>
+		<collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/CAMERA-PAN.stl"/>
+            </geometry>
+        </collision>
+		<visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/CAMERA-PAN.stl"/>
+            </geometry>
+            <material name="Blue"/>
+        </visual>
+    </link>
+	<joint name="CameraPan" type="fixed">
+        <origin xyz="0.720979 0.255016 0" rpy="0 1.5708 0"/>
+        <parent link="TorsoForebend"/>
+        <child link="CameraPan"/>
+        <axis xyz="0 0 1"/>
+    </joint>
+	<link name="CameraTilt">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0  0  0"/>
+            <mass value="0.00001"/>
+            <inertia ixx="1e-06" ixy="0" ixz="0" iyy="1e-06" iyz="0" izz="1e-06"/>
+        </inertial>	
+		<collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/CAMERA-TILT.stl"/>
+            </geometry>
+        </collision>
+		<visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="../meshes/CAMERA-TILT.stl"/>
+            </geometry>
+            <material name="Blue"/>
+        </visual>
+    </link>
+	<joint name="CameraTilt" type="fixed">
+        <origin xyz="0 0 0.0690118" rpy="0 -1.5708 0"/>
+        <parent link="CameraPan"/>
+        <child link="CameraTilt"/>
+        <axis xyz="0 0 1"/>
+    </joint>
+
+</robot>
