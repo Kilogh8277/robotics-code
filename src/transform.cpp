@@ -11,15 +11,15 @@ struct JointInfo {
     JointInfo* parent_link = NULL;
     JointInfo* child_links[5] = {NULL}; // Assuming a maximum of 5 child links (adjust as needed)
     int numChildren = 0;
+    uint8_t actuated = 0;
 
     // Important joint information
     Transform transform;
     void (*rotationFunc)(double, double*);
 };
 
-struct JointInfo joints[joint_length];
+struct JointInfo* joints = (JointInfo *)calloc(joint_length, sizeof(JointInfo));
 int num_joints = 0, num_actuators = 0;
-uint8_t initialized = 0;
 
 JointInfo* findJointByName(std::string nameToFind) {
     JointInfo* currJoint;
@@ -70,51 +70,48 @@ void SetTransformFromRotMat(double* rotMat, double* distVec, Transform* transfor
 }
 
 void InitTransforms() {
-    if (initialized == 0) {
-        Transform currTransform; double rotMat[9] = {0}, distVec[3] = {0};
-        Transform parentTransform; double parentRotMat[9], parentDistVec[3];
-        
-        memcpy(&currTransform, &joints[0].transform, sizeof(Transform));
+    Transform currTransform; double rotMat[9] = {0}, distVec[3] = {0};
+    Transform parentTransform; double parentRotMat[9], parentDistVec[3];
+    
+    memcpy(&currTransform, &joints[0].transform, sizeof(Transform));
+    GetRotationMatrixFromTransform(currTransform.transform, rotMat, distVec);
+    double rotX[9] = {0}, rotY[9] = {0}, rotZ[9] = {0}, 
+            rotMatX[9] = {0}, rotMatXY[9] = {0}, rotMatXYZ[9] = {0}; 
+    int rotSize[] = {3, 3}, transformSize[] = {4, 4};
+    RotXYZ(&rotMat[0], joints[0].origin_rpy);
+    rotx(joints[0].origin_rpy[0], rotX);
+    roty(joints[0].origin_rpy[1], rotY);
+    rotz(joints[0].origin_rpy[2], rotZ);
+    
+    matrixMultiply(rotMat, rotSize, rotX, rotSize, rotMatX);
+    matrixMultiply(rotMatX, rotSize, rotY, rotSize, rotMatXY);
+    matrixMultiply(rotMatXY, rotSize, rotZ, rotSize, rotMatXYZ);
+    distVec[0] = -joints[0].origin_xyz[0];
+    distVec[1] = -joints[0].origin_xyz[1];
+    distVec[2] = -joints[0].origin_xyz[2];
+    SetTransformFromRotMat(rotMatXYZ, distVec, &joints[0].transform);
+    for (int i = 1; i < num_joints; i++) {
+        memset(rotX, 0, 9*sizeof(double)); memset(rotY, 0, 9*sizeof(double)); memset(rotZ, 0, 9*sizeof(double));
+        memset(rotMatX, 0, 9*sizeof(double)); memset(rotMatXY, 0, 9*sizeof(double)); memset(rotMatXYZ, 0, 9*sizeof(double));
+        memset(distVec, 0, 3*sizeof(double));
+        currTransform = joints[i].transform; parentTransform = joints[i].parent_link->transform;
         GetRotationMatrixFromTransform(currTransform.transform, rotMat, distVec);
-        double rotX[9] = {0}, rotY[9] = {0}, rotZ[9] = {0}, 
-               rotMatX[9] = {0}, rotMatXY[9] = {0}, rotMatXYZ[9] = {0}; 
-        int rotSize[] = {3, 3}, transformSize[] = {4, 4};
-        RotXYZ(&rotMat[0], joints[0].origin_rpy);
-        rotx(joints[0].origin_rpy[0], rotX);
-        roty(joints[0].origin_rpy[1], rotY);
-        rotz(joints[0].origin_rpy[2], rotZ);
-        
+        GetRotationMatrixFromTransform(parentTransform.transform, parentRotMat, parentDistVec);
+        rotx(joints[i].origin_rpy[0], rotX);
+        roty(joints[i].origin_rpy[1], rotY);
+        rotz(joints[i].origin_rpy[2], rotZ);
         matrixMultiply(rotMat, rotSize, rotX, rotSize, rotMatX);
         matrixMultiply(rotMatX, rotSize, rotY, rotSize, rotMatXY);
         matrixMultiply(rotMatXY, rotSize, rotZ, rotSize, rotMatXYZ);
-        distVec[0] = -joints[0].origin_xyz[0];
-        distVec[1] = -joints[0].origin_xyz[1];
-        distVec[2] = -joints[0].origin_xyz[2];
-        SetTransformFromRotMat(rotMatXYZ, distVec, &joints[0].transform);
-        for (int i = 1; i < num_joints; i++) {
-            memset(rotX, 0, 9*sizeof(double)); memset(rotY, 0, 9*sizeof(double)); memset(rotZ, 0, 9*sizeof(double));
-            memset(rotMatX, 0, 9*sizeof(double)); memset(rotMatXY, 0, 9*sizeof(double)); memset(rotMatXYZ, 0, 9*sizeof(double));
-            memset(distVec, 0, 3*sizeof(double));
-            currTransform = joints[i].transform; parentTransform = joints[i].parent_link->transform;
-            GetRotationMatrixFromTransform(currTransform.transform, rotMat, distVec);
-            GetRotationMatrixFromTransform(parentTransform.transform, parentRotMat, parentDistVec);
-            rotx(joints[i].origin_rpy[0], rotX);
-            roty(joints[i].origin_rpy[1], rotY);
-            rotz(joints[i].origin_rpy[2], rotZ);
-            matrixMultiply(rotMat, rotSize, rotX, rotSize, rotMatX);
-            matrixMultiply(rotMatX, rotSize, rotY, rotSize, rotMatXY);
-            matrixMultiply(rotMatXY, rotSize, rotZ, rotSize, rotMatXYZ);
-            double temp[3] = {0}; int vecSize[] = {3, 1};
-            temp[0] = -joints[i].origin_xyz[0];
-            temp[1] = -joints[i].origin_xyz[1];
-            temp[2] = -joints[i].origin_xyz[2];
-            matrixMultiply(rotMatXYZ, rotSize, temp, vecSize, distVec);
-            Transform result = {0};
-            SetTransformFromRotMat(rotMatXYZ, distVec, &currTransform);
-            matrixMultiply(&currTransform.transform[0], transformSize, &parentTransform.transform[0], transformSize, &result.transform[0]);
-            memcpy(&joints[i].transform, &result, sizeof(Transform));
-        }
-        initialized = 1;
+        double temp[3] = {0}; int vecSize[] = {3, 1};
+        temp[0] = -joints[i].origin_xyz[0];
+        temp[1] = -joints[i].origin_xyz[1];
+        temp[2] = -joints[i].origin_xyz[2];
+        matrixMultiply(rotMatXYZ, rotSize, temp, vecSize, distVec);
+        Transform result = {0};
+        SetTransformFromRotMat(rotMatXYZ, distVec, &currTransform);
+        matrixMultiply(&currTransform.transform[0], transformSize, &parentTransform.transform[0], transformSize, &result.transform[0]);
+        memcpy(&joints[i].transform, &result, sizeof(Transform));
     }
 }
 
@@ -130,7 +127,7 @@ void TransformFromTo(const char* source, const char* target) {
     }
 }
 
-void getTransform(const char* body, double* transform) {
+void getTransform(const double* q, const char* body, double* transform) {
     for (int i = 0; i < joint_length; i++) {
         if (!std::strcmp(body, joints[i].name)) {
             memcpy(transform, &joints[i].transform.transform[0], sizeof(Transform));
@@ -163,7 +160,11 @@ void parseURDF(char* urdf_file) {
             std::size_t type_end = line.find("\"", type_pos);
             memcpy(&newJoint->type, line.substr(type_pos, type_end - type_pos).c_str(), type_end - type_pos);
             if(!std::strcmp(newJoint->type, "revolute")) {
-                num_actuators++;
+                newJoint->actuated = num_actuators++;
+                
+            }
+            else if(!std::strcmp(newJoint->type, "prismatic")) {
+                newJoint->actuated = num_actuators++;
             }
 
             while (line.find("</joint") == std::string::npos) {
@@ -201,20 +202,27 @@ void parseURDF(char* urdf_file) {
 
                     std::stringstream axis_stream(axis_str);
                     axis_stream >> newJoint->axis[0] >> newJoint->axis[1] >> newJoint->axis[2];
-                    if (newJoint->axis[0]) {
-                        newJoint->rotationFunc = &rotx;
-                    }
-                    if (newJoint->axis[1]) {
-                        newJoint->rotationFunc = &roty;
-                    }
-                    if (newJoint->axis[2]) {
-                        newJoint->rotationFunc = &rotz;
+
+                    if (!std::strcmp(newJoint->type, (char *)"revolute")) {
+                        if (newJoint->axis[0]) {
+                            newJoint->rotationFunc = &rotx;
+                        }
+                        if (newJoint->axis[1]) {
+                            newJoint->rotationFunc = &roty;
+                        }
+                        if (newJoint->axis[2]) {
+                            newJoint->rotationFunc = &rotz;
+                        }
                     }
                 }
                 std::getline(file, line);
             }
             joint_num++;
         }
+    }
+    if (joint_num == 0) {
+        fprintf(stderr, "ERROR! No DOFs were found in URDF. Check the location of the URDF.\n");
+        exit(-1);
     }
     num_joints = joint_num;
 }

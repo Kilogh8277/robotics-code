@@ -148,6 +148,31 @@ void rotz_deg(double c, bool isDegBool, double* R) {
     rotz(c, R);
 }
 
+/*******************************************************************************************
+Displace a 3-vector in the x-direction by c meters
+*******************************************************************************************/
+void displacex(const double c, double* d) {
+    d[0] += c;
+}
+
+/*******************************************************************************************
+Displace a 3-vector in the y-direction by c meters
+*******************************************************************************************/
+void displacey(const double c, double* d) {
+    d[1] += c;
+}
+
+/*******************************************************************************************
+Displace a 3-vector in the z-direction by c meters
+*******************************************************************************************/
+void displacez(const double c, double* d) {
+    d[2] += c;
+}
+
+/*******************************************************************************************
+Differential orthogonal rotation (rotation matrix between
+two rotation matrices that accounts for wrapping)
+*******************************************************************************************/
 void dor(const double* Rd, const double* Ra, double* dr) {
     double Sr[9], Rd_Ra_diff[9], Ra_transpose[9];
 

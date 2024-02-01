@@ -36,7 +36,7 @@ JointInfo* findJointByName(std::string nameToFind);
 
 void GetOffset(char* bodyName, double* offset);
 
-void getTransform(const char* body, double* transform);
+void getTransform(const double* q, const char* body, double* transform);
 
 void GetRotationMatrixFromTransform(const double* transform, double* rotMat, double* distVec);
 

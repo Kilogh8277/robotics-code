@@ -1,4 +1,5 @@
 #include "transform.h"
+#include "stdint.h"
 
 extern JointInfo joints[joint_length];
 extern int num_joints;
@@ -19,18 +20,17 @@ int main(int argc, char** argv) {
 
     GetRotationMatrixFromTransform(transform, rotMat, distVec);
 
-    double q[16] = {0};
+    double q[16] = {0}, output[16] = {0};
     InitTransforms();
 
-
-
-    getTransform((char *)"LeftAnkleFlex", q);
+    getTransform(q, (char *)"LeftAnkleFlex", output);
 
     for (int i = 0; i < 16; i++) {
-        printf("%0.5f ", q[i]);
+        printf("%0.5f ", output[i]);
         if ((i+1) % 4 == 0) {
             printf("\n");
         }
     }
+
     return 0;
 }
