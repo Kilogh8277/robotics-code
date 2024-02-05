@@ -13,7 +13,10 @@
 						   "ms-iot.vscode-ros",
 						   "smilerobotics.urdf"]
 		}
-	}
+	},
+	"mounts": [
+		"source=C:/MATLAB/R2023a/simulink/include,target=/matlab,type=bind"
+	]
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},

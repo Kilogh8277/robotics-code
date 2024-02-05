@@ -3,3 +3,6 @@ build/
 .github/
 
 slprj/
+*.slxc
+*.original
+*.autosave

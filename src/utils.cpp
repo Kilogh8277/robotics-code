@@ -94,7 +94,7 @@ Calculate the rotation matrix about the x-axis c radians
 void rotx(double c, double* R) {
     R[0] = 1;   R[1] = 0;       R[2] = 0;
     R[3] = 0;   R[4] = cos(c);  R[5] = sin(c);
-    R[6] = 0;   R[7] = -sin(c);  R[8] = cos(c);
+    R[6] = 0;   R[7] = -sin(c); R[8] = cos(c);
 }
 
 /*******************************************************************************************
@@ -114,7 +114,7 @@ Calculate the rotation matrix about the y-axis c radians
 void roty(double c, double* R) {
     R[0] = cos(c);  R[1] = 0;   R[2] = -sin(c);
     R[3] = 0;       R[4] = 1;   R[5] = 0;
-    R[6] = sin(c); R[7] = 0;   R[8] = cos(c);
+    R[6] = sin(c);  R[7] = 0;   R[8] = cos(c);
 }
 
 /*******************************************************************************************
@@ -149,24 +149,75 @@ void rotz_deg(double c, bool isDegBool, double* R) {
 }
 
 /*******************************************************************************************
+Calculate the rotation matrix about the x-axis c radians
+*******************************************************************************************/
+void rotx(double c, struct Transform* T) {
+    Transform rotX;
+    double rotMat[9] = {0}, distVec[3] = {0};
+    rotx(c, rotMat);
+    SetTransformFromRotMat(rotMat, distVec, &rotX);
+    Transform temp = {0};
+    int transformSize[] = {4, 4}, rotMatSize[] = {3, 3}, distVecSize[] = {3, 1};
+
+    double currRotMat[9] = {0}, currDistVec[3] = {0};
+    GetRotationMatrixFromTransform(&T->transform[0], currRotMat, currDistVec);
+    double rotatedDistVec[3] = {0};
+    matrixMultiply(rotMat, rotMatSize, currDistVec, distVecSize, rotatedDistVec);
+    SetTransformFromRotMat(currRotMat, rotatedDistVec, T);
+
+    matrixMultiply(&T->transform[0], transformSize, &rotX.transform[0], transformSize, &temp.transform[0]);
+    memcpy(T, &temp, sizeof(Transform));
+}
+
+/*******************************************************************************************
+Calculate the rotation matrix about the y-axis c radians
+*******************************************************************************************/
+void roty(double c, struct Transform* T) {
+    Transform rotY;
+    double rotMat[9] = {0}, distVec[3] = {0};
+    roty(c, rotMat);
+    SetTransformFromRotMat(rotMat, distVec, &rotY);
+    Transform temp = {0};
+    int transformSize[] = {4, 4};
+
+    matrixMultiply(&T->transform[0], transformSize, &rotY.transform[0], transformSize, &temp.transform[0]);
+    memcpy(T, &temp, sizeof(Transform));
+}
+
+/*******************************************************************************************
+Calculate the rotation matrix about the y-axis c radians
+*******************************************************************************************/
+void rotz(double c, struct Transform* T) {
+    Transform rotZ;
+    double rotMat[9] = {0}, distVec[3] = {0};
+    rotz(c, rotMat);
+    SetTransformFromRotMat(rotMat, distVec, &rotZ);
+    Transform temp = {0};
+    int transformSize[] = {4, 4};
+
+    matrixMultiply(&T->transform[0], transformSize, &rotZ.transform[0], transformSize, &temp.transform[0]);
+    memcpy(T, &temp, sizeof(Transform));
+}
+
+/*******************************************************************************************
 Displace a 3-vector in the x-direction by c meters
 *******************************************************************************************/
-void displacex(const double c, double* d) {
-    d[0] += c;
+void displacex(const double c, struct Transform* d) {
+    d->transform[3] -= c;
 }
 
 /*******************************************************************************************
 Displace a 3-vector in the y-direction by c meters
 *******************************************************************************************/
-void displacey(const double c, double* d) {
-    d[1] += c;
+void displacey(const double c, struct Transform* d) {
+    d->transform[7] -= c;
 }
 
 /*******************************************************************************************
 Displace a 3-vector in the z-direction by c meters
 *******************************************************************************************/
-void displacez(const double c, double* d) {
-    d[2] += c;
+void displacez(const double c, struct Transform* d) {
+    d->transform[11] -= c;
 }
 
 /*******************************************************************************************
@@ -185,5 +236,6 @@ void dor(const double* Rd, const double* Ra, double* dr) {
     matrixMultiply(Rd_Ra_diff, rotMatSize, Ra_transpose, rotMatSize, Sr);
 
     dr[0] = (Sr[7] - Sr[5]) / 2;
-    dr[1] = (Sr[2] - Sr[6]) / 2;    dr[2] = (Sr[3] - Sr[1]) / 2;
+    dr[1] = (Sr[2] - Sr[6]) / 2;    
+    dr[2] = (Sr[3] - Sr[1]) / 2;
 }
