@@ -101,7 +101,7 @@ void SetTransformFromRotMat(double* rotMat, double* distVec, Transform* transfor
 /*******************************************************************************************
 Calculate the transform FROM source TO target
 *******************************************************************************************/
-void TransformFromTo(const double* q, const char* source, const char* target, double* transform, double currTimeStep) {
+void TransformFromTo(char* urdfpath, const double* q, const char* source, const char* target, double* transform, double currTimeStep) {
     int sourceIndex = 0, targetIndex = 0;
     double sourceRotMat[9] = {0}, sourceDistVec[3] = {0},
            targetRotMat[9] = {0}, targetDistVec[3] = {0};
@@ -229,14 +229,55 @@ void InvertTransform(Transform* T) {
     SetTransformFromRotMat(rotMatOut, distVecOut, T);
 }
 
-void GetJacobianForBody(const double* q, char* bodyName, double currTimeStep) {
+void CalculateJacobianColumn(JointInfo thisJoint, double* jacobian) {
+    Transform thisBodyTransform; double rotMat[9] = {0}, distVec[3] = {0}, rotMatAxis[3] = {0}, crossVec[3] = {0};
+    uint8_t actuator_index = thisJoint.actuator;
+    thisBodyTransform   =   thisJoint.transform;
+    GetRotationMatrixFromTransform(&thisBodyTransform.transform[0], rotMat, distVec);
+    if (thisJoint.axis[0] == 1) {
+        rotMatAxis[0] = rotMat[0]; rotMatAxis[1] = rotMat[3]; rotMatAxis[2] = rotMat[6];
+    }
+    else if (thisJoint.axis[1] == 1) {
+        rotMatAxis[0] = rotMat[1]; rotMatAxis[1] = rotMat[4]; rotMatAxis[2] = rotMat[7];
+    }
+    else if (thisJoint.axis[2] == 1) {
+        rotMatAxis[0] = rotMat[2]; rotMatAxis[1] = rotMat[5]; rotMatAxis[2] = rotMat[8];
+    }
+    else {
+        fprintf(stderr, "GetJacobianForBody: ERROR! A joint appears to be actuated but no axis is defined\n");
+        fprintf(stderr, "GetJacobianForBody: Joint: %s\n", thisJoint.name);
+        return;
+    }
+    cross(distVec, rotMatAxis, crossVec);
+    jacobian[6*actuator_index + 0] = rotMatAxis[0];
+    jacobian[6*actuator_index + 1] = rotMatAxis[1];
+    jacobian[6*actuator_index + 2] = rotMatAxis[2];
+    jacobian[6*actuator_index + 3] = crossVec[0];
+    jacobian[6*actuator_index + 4] = crossVec[1];
+    jacobian[6*actuator_index + 5] = crossVec[2];
+}
+
+void GetJacobianForBody(const double* q, char* bodyName, double currTimeStep, double* jacobian) {
     if (*mostRecentTimeStep != currTimeStep) {
         updateTransformTree(q);
         *mostRecentTimeStep = currTimeStep;
     }
-    Transform thisBodyTransform; double rotMat[9]; double distVec[3]; double rotMatAxis[3];
+    JointInfo thisJoint;
     for (int i = 0; i < *num_joints; i++) {
-        thisBodyTransform   =   joints[i].transform;
+        if (!std::strncmp(joints[i].name, bodyName, joints[i].name_size)) {
+            thisJoint = joints[i];
+            if (thisJoint.actuated > 0) {
+                CalculateJacobianColumn(thisJoint, &jacobian[0]);
+            }
+                do  {
+                    thisJoint = *thisJoint.parent_link;
+                    if (thisJoint.actuated > 0) {
+                        CalculateJacobianColumn(thisJoint, &jacobian[0]);
+                    }
+                } while (thisJoint.parent_link != NULL);
+            return;
+        }
+
     }
 }
 

@@ -2,7 +2,7 @@
 #include "stdint.h"
 
 extern JointInfo* joints;
-extern int num_joints;
+extern int* num_joints;
 
 int main(int argc, char** argv) {
     char urdf_file[] = "/workspaces/robotics_code/urdf/XT_PRU_noHands.urdf";
@@ -48,6 +48,24 @@ int main(int argc, char** argv) {
         if ((i+1) % 4 == 0) {
             printf("\n");
         }
+    }
+
+    char bodyName[] = "LeftElbowFlex";
+    int body_index = 0;
+    for (int i = 0; i < *num_joints; i++) {
+        if (!std::strncmp(joints[i].name, bodyName, joints[i].name_size)) {
+            body_index = i;
+            break;
+        }
+    }
+    
+    GetJacobianForBody(q, bodyName, 0.002, &joints[body_index].jacobian.jacobian[0]);
+
+    for (int i = 0; i < *num_joints; i++) {
+        for (int j = 0; j < 6; j++) {
+            printf("%0.5f ", joints[body_index].jacobian.jacobian[6*i + j]);
+        }
+        printf("\n");
     }
 
     freeMemory();

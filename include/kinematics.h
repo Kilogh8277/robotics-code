@@ -68,7 +68,7 @@ void GetOffset(char* bodyName, double* offset);
 
 void getTransform(const double* q, const char* body, double* transform, double currTimeStep);
 
-void TransformFromTo(const double* q, const char* source, const char* target, double* transform, double currTimeStep);
+void TransformFromTo(char* urdfpath, const double* q, const char* source, const char* target, double* transform, double currTimeStep);
 
 void updateTransformTree(const double* q);
 
@@ -78,6 +78,6 @@ void SetTransformFromRotMat(double* rotMat, double* distVec, Transform* transfor
 
 void InvertTransform(Transform* T);
 
-void GetJacobianForBody(const double* q, char* bodyName);
+void GetJacobianForBody(const double* q, char* bodyName, double currTimeStep, double* jacobian);
 
 #endif // __TRANSFORM__H
