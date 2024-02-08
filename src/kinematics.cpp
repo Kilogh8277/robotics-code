@@ -1,5 +1,13 @@
 #include "kinematics.h"
 
+// Simulink should not have access to these functions -- helper functions
+void parseURDF(const char* urdf_file, int urdflen);
+JointInfo* findJointByName(std::string nameToFind);
+void GetOffset(char* bodyName, double* offset);
+void getTransform(const double* q, const int body_index, double* transform, double currTimeStep);
+void updateTransformTree(const double* q);
+void InvertTransform(Transform* T);
+
 struct JointInfo* joints;
 static int initialized = 0, urdfParsed = 0;
 int *num_joints = (int *)calloc(1, sizeof(int));
@@ -67,54 +75,38 @@ void GetOffset(char* bodyName, double* offset) {
 }
 
 /*******************************************************************************************
-Get the rotation matrix and translation vector from the provided transform (row-major)
-*******************************************************************************************/
-void GetRotationMatrixFromTransform(const double* transform, double* rotMat, double* distVec) {
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
-            rotMat[3*i+j] = transform[4*i+j];
-        }
-    }
-    for (int i = 0; i < 3; i++) {
-        for (int j = 3; j <= 3; j++) {
-            distVec[i] = transform[4*i+j];
-        }
-    }
-}
-
-/*******************************************************************************************
-Set the transform with the rotation matrix and translation vector (row-major)
-*******************************************************************************************/
-void SetTransformFromRotMat(double* rotMat, double* distVec, Transform* transform) {
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
-            transform->transform[4*i+j] = rotMat[3*i+j];
-        }
-    }
-    for (int i = 0; i < 3; i++) {
-        for (int j = 3; j <= 3; j++) {
-            transform->transform[4*i+j] = distVec[i];
-        }
-    }
-}
-
-/*******************************************************************************************
 Calculate the transform FROM source TO target
 *******************************************************************************************/
-void TransformFromTo(char* urdfpath, const int urdflen, const double* q, const char* source, const char* target, double* transform, double currTimeStep) {
+void TransformFromTo(const char* urdfpath, const int urdflen, const double* q, const char* source, const char* target, double* transform, double currTimeStep) {
     if (!urdfParsed) {
         parseURDF(urdfpath, urdflen);
     }
     int sourceIndex = 0, targetIndex = 0;
     Transform sourceTransform, targetTransform;
+    int transformSize[] = {4, 4};
+    if (!std::strncmp(source, (char *)"World", 5)) {
+        sourceIndex = 1;
+    }
+    if (!std::strncmp(target, (char *)"World", 5)) {
+        targetIndex = 1;
+    }
     for (int i = 0; i < joint_length; i++) {
         if (!std::strncmp(joints[i].name, source, joints[i].name_size)) {
+            // if (sourceIndex == 2) {
+            //     getTransform(q, i, &transform[0], currTimeStep);
+            //     return;
+            // }
             getTransform(q, i, &sourceTransform.transform[0], currTimeStep);
-            sourceIndex = i;
+            sourceIndex = 1;
         }
         if (!std::strncmp(joints[i].name, target, joints[i].name_size)) {
+            // if (targetIndex == 2) {
+            //     getTransform(q, i, &targetTransform.transform[0], currTimeStep);
+            //     transpose(&targetTransform.transform[0], &transform[0], transformSize);
+            //     return;
+            // }
             getTransform(q, i, &targetTransform.transform[0], currTimeStep);
-            targetIndex = i;
+            targetIndex = 1;
         }
         if (sourceIndex > 0 && targetIndex > 0) {
             break;
@@ -127,7 +119,6 @@ void TransformFromTo(char* urdfpath, const int urdflen, const double* q, const c
         return;
     }
     else {
-        int transformSize[] = {4, 4};
         InvertTransform(&targetTransform);
         matrixMultiply(&targetTransform.transform[0], transformSize, &sourceTransform.transform[0], transformSize, &transform[0]);
     }
@@ -264,7 +255,7 @@ void CalculateJacobianColumn(JointInfo thisJoint, double* jacobian) {
     jacobian[6*actuator_index + 5] = crossVec[2];
 }
 
-void GetJacobianForBody(char* urdfpath, const int urdflen, const double* q, char* bodyName, double currTimeStep, double* jacobian) {
+void GetJacobianForBody(const char* urdfpath, const int urdflen, const double* q, char* bodyName, double currTimeStep, double* jacobian) {
     if (!urdfParsed) {
         parseURDF(urdfpath, urdflen);
     }
@@ -292,7 +283,7 @@ void GetJacobianForBody(char* urdfpath, const int urdflen, const double* q, char
 }
 
 // Function to parse URDF file and extract joint information
-void parseURDF(char* urdf_file, int urdflen) {
+void parseURDF(const char* urdf_file, int urdflen) {
     char* filename = (char *)calloc(urdflen, sizeof(char));
     for (int i = 0; i < urdflen; i++) {
         filename[i] = urdf_file[i];

@@ -239,3 +239,35 @@ void dor(const double* Rd, const double* Ra, double* dr) {
     dr[1] = (Sr[2] - Sr[6]) / 2;    
     dr[2] = (Sr[3] - Sr[1]) / 2;
 }
+
+/*******************************************************************************************
+Get the rotation matrix and translation vector from the provided transform (row-major)
+*******************************************************************************************/
+void GetRotationMatrixFromTransform(const double* transform, double* rotMat, double* distVec) {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            rotMat[3*i+j] = transform[4*i+j];
+        }
+    }
+    for (int i = 0; i < 3; i++) {
+        for (int j = 3; j <= 3; j++) {
+            distVec[i] = transform[4*i+j];
+        }
+    }
+}
+
+/*******************************************************************************************
+Set the transform with the rotation matrix and translation vector (row-major)
+*******************************************************************************************/
+void SetTransformFromRotMat(double* rotMat, double* distVec, Transform* transform) {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            transform->transform[4*i+j] = rotMat[3*i+j];
+        }
+    }
+    for (int i = 0; i < 3; i++) {
+        for (int j = 3; j <= 3; j++) {
+            transform->transform[4*i+j] = distVec[i];
+        }
+    }
+}

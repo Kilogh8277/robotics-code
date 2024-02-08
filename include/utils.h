@@ -33,4 +33,8 @@ void displacey(double c, struct Transform* d);
 void displacez(double c, struct Transform* d);
 void dor(const double* Rd, const double* Ra, double* dr);
 
+// Kinematics functions
+void GetRotationMatrixFromTransform(const double* transform, double* rotMat, double* distVec);
+void SetTransformFromRotMat(double* rotMat, double* distVec, Transform* transform);
+
 #endif // __UTILS__H

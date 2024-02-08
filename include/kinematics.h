@@ -51,24 +51,8 @@ void initializeMemory(void);
 
 void freeMemory();
 
-void parseURDF(char* urdf_file, int urdflen);
+void TransformFromTo(const char* urdfpath, const int urdflen, const double* q, const char* source, const char* target, double* transform, double currTimeStep);
 
-JointInfo* findJointByName(std::string nameToFind);
-
-void GetOffset(char* bodyName, double* offset);
-
-void getTransform(const double* q, const int body_index, double* transform, double currTimeStep);
-
-void TransformFromTo(char* urdfpath, const int urdflen, const double* q, const char* source, const char* target, double* transform, double currTimeStep);
-
-void updateTransformTree(const double* q);
-
-void GetRotationMatrixFromTransform(const double* transform, double* rotMat, double* distVec);
-
-void SetTransformFromRotMat(double* rotMat, double* distVec, Transform* transform);
-
-void InvertTransform(Transform* T);
-
-void GetJacobianForBody(char* urdfPath, const int urdflen, const double* q, char* bodyName, double currTimeStep, double* jacobian);
+void GetJacobianForBody(const char* urdfpath, const int urdflen, const double* q, char* bodyName, double currTimeStep, double* jacobian);
 
 #endif // __KINEMATICS__H
