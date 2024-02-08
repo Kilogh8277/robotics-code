@@ -9,15 +9,14 @@ void updateTransformTree(const double* q);
 void InvertTransform(Transform* T);
 
 struct JointInfo* joints;
-static int initialized = 0, urdfParsed = 0;
-int *num_joints = (int *)calloc(1, sizeof(int));
-double *mostRecentTimeStep = (double *)calloc(1, sizeof(double));
+int *num_joints, *urdfParsed, initialized = 0;
+double *mostRecentTimeStep;
 
 /*******************************************************************************************
 Function to allocate memory for the array of JointInfo structures
 *******************************************************************************************/
 void initializeMemory(void) {
-    if (!initialized) {
+    if (!(initialized)) {
         // Allocate memory for the joints array
         joints = (JointInfo*)calloc(joint_length, sizeof(JointInfo));
 
@@ -28,7 +27,9 @@ void initializeMemory(void) {
         }
 
         num_joints = (int *)calloc(1, sizeof(int));
-
+        urdfParsed = (int *)calloc(1, sizeof(int));
+        mostRecentTimeStep = (double *)calloc(1, sizeof(double));
+        
         initialized = 1;
     }
 }
@@ -39,11 +40,11 @@ allocated memory until MATLAB is closed
 *******************************************************************************************/
 void freeMemory() {
     if (initialized) {
+        initialized = 0;
+        free(urdfParsed);
         free(joints);
         free(num_joints);
         free(mostRecentTimeStep);
-        initialized = 0;
-        urdfParsed = 0;
     }
 }
 
@@ -78,7 +79,7 @@ void GetOffset(char* bodyName, double* offset) {
 Calculate the transform FROM source TO target
 *******************************************************************************************/
 void TransformFromTo(const char* urdfpath, const int urdflen, const double* q, const char* source, const char* target, double* transform, double currTimeStep) {
-    if (!urdfParsed) {
+    if (!(*urdfParsed)) {
         parseURDF(urdfpath, urdflen);
     }
     int sourceIndex = 0, targetIndex = 0;
@@ -256,7 +257,7 @@ void CalculateJacobianColumn(JointInfo thisJoint, double* jacobian) {
 }
 
 void GetJacobianForBody(const char* urdfpath, const int urdflen, const double* q, char* bodyName, double currTimeStep, double* jacobian) {
-    if (!urdfParsed) {
+    if (!(*urdfParsed)) {
         parseURDF(urdfpath, urdflen);
     }
     if (*mostRecentTimeStep != currTimeStep) {
@@ -394,9 +395,9 @@ void parseURDF(const char* urdf_file, int urdflen) {
     // This makes sure the URDF specified opened a valid file
     if (joint_num == 0) {
         fprintf(stderr, "ERROR! No DOFs were found in URDF. Check the location of the URDF.\n");
-        urdfParsed = 0;
+        *urdfParsed = 0;
     }
     // Set the value of the global variable
     *num_joints = joint_num;
-    urdfParsed = 1;
+    *urdfParsed = 1;
 }
