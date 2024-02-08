@@ -10,16 +10,6 @@
 
 #define joint_length 50
 
-// Structure to represent a 3D vector
-struct Vector3 {
-    double x, y, z;
-};
-
-// Structure to represent a 3D rotation (Euler angles)
-struct Rotation3 {
-    double x, y, z;
-};
-
 struct Transform {
     double transform[16] = {1, 0, 0, 0,
                             0, 1, 0, 0,
@@ -49,6 +39,7 @@ struct JointInfo {
     int numChildren = 0;                // Keep track of the number of children so we can allocate from the top
     uint8_t actuated = 0, actuator = 0; // Keep track if this joint is actuated and where it is in the input array
     size_t name_size = 0;               // The size of the name to ensure string comparison occurs appropriately
+    size_t link_name_size = 0;          // The size of the link name to ensure string comparison occurs appropriately
 
     // Important joint information
     Transform transform;                // The transform of this joint
@@ -66,7 +57,7 @@ JointInfo* findJointByName(std::string nameToFind);
 
 void GetOffset(char* bodyName, double* offset);
 
-void getTransform(const double* q, const char* body, double* transform, double currTimeStep);
+void getTransform(const double* q, const int body_index, double* transform, double currTimeStep);
 
 void TransformFromTo(char* urdfpath, const int urdflen, const double* q, const char* source, const char* target, double* transform, double currTimeStep);
 

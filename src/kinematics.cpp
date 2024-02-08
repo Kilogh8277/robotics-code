@@ -21,7 +21,6 @@ void initializeMemory(void) {
 
         num_joints = (int *)calloc(1, sizeof(int));
 
-        // parseURDF(urdfPath);
         initialized = 1;
     }
 }
@@ -107,16 +106,14 @@ void TransformFromTo(char* urdfpath, const int urdflen, const double* q, const c
         parseURDF(urdfpath, urdflen);
     }
     int sourceIndex = 0, targetIndex = 0;
-    double sourceRotMat[9] = {0}, sourceDistVec[3] = {0},
-           targetRotMat[9] = {0}, targetDistVec[3] = {0};
     Transform sourceTransform, targetTransform;
     for (int i = 0; i < joint_length; i++) {
         if (!std::strncmp(joints[i].name, source, joints[i].name_size)) {
-            getTransform(q, source, &sourceTransform.transform[0], currTimeStep);
+            getTransform(q, i, &sourceTransform.transform[0], currTimeStep);
             sourceIndex = i;
         }
         if (!std::strncmp(joints[i].name, target, joints[i].name_size)) {
-            getTransform(q, target, &targetTransform.transform[0], currTimeStep);
+            getTransform(q, i, &targetTransform.transform[0], currTimeStep);
             targetIndex = i;
         }
         if (sourceIndex > 0 && targetIndex > 0) {
@@ -127,6 +124,7 @@ void TransformFromTo(char* urdfpath, const int urdflen, const double* q, const c
         fprintf(stderr, "ERROR! Source and/or target not able to update.\n");
         fprintf(stderr, "Source: %s\n", source);
         fprintf(stderr, "Target: %s\n", target);
+        return;
     }
     else {
         int transformSize[] = {4, 4};
@@ -139,17 +137,12 @@ void TransformFromTo(char* urdfpath, const int urdflen, const double* q, const c
 Update the transforms with the current joint configuration, then retrieve the specified 
 transform
 *******************************************************************************************/
-void getTransform(const double* q, const char* body, double* transform, double currTimeStep) {
+void getTransform(const double* q, const int body_index, double* transform, double currTimeStep) {
     if (*mostRecentTimeStep != currTimeStep) {
         updateTransformTree(q);
         *mostRecentTimeStep = currTimeStep;
     }
-    for (int i = 0; i < *num_joints; i++) {
-        if (!std::strncmp(body, joints[i].name, joints[i].name_size)) {
-            memcpy(transform, &joints[i].transform.transform[0], sizeof(Transform));
-            return;
-        }
-    }
+    memcpy(transform, &joints[body_index].transform.transform[0], sizeof(Transform));
 }
 
 /*******************************************************************************************
@@ -222,14 +215,22 @@ void updateTransformTree(const double* q) {
 void InvertTransform(Transform* T) {
     double rotMatIn[9] = {0}, rotMatOut[9] = {0}, distVecIn[3] = {0}, distVecOut[3] = {0};
     int rotMatSize[] = {3, 3};
+    // Get the rotation matrix and distance vector from this transform
     GetRotationMatrixFromTransform(T->transform, rotMatIn, distVecIn);
+    // The inverse of the rotation matrix is the transpose
     transpose(rotMatIn, rotMatOut, rotMatSize);
+
+    // Set the temporary inverse of the translation vector
     double temp[3] = {0};
     int distVecSize[3] = {3, 1};
     temp[0] = -distVecIn[0];
     temp[1] = -distVecIn[1];
     temp[2] = -distVecIn[2];
+
+    // Multiply by the new rotation matrix to set in the new frame
     matrixMultiply(rotMatOut, rotMatSize, temp, distVecSize, distVecOut);
+
+    // Set the new transform with the rotation matrix and translation vector
     SetTransformFromRotMat(rotMatOut, distVecOut, T);
 }
 
@@ -238,19 +239,21 @@ void CalculateJacobianColumn(JointInfo thisJoint, double* jacobian) {
     uint8_t actuator_index = thisJoint.actuator;
     thisBodyTransform   =   thisJoint.transform;
     GetRotationMatrixFromTransform(&thisBodyTransform.transform[0], rotMat, distVec);
-    if (thisJoint.axis[0] == 1) {
-        rotMatAxis[0] = rotMat[0]; rotMatAxis[1] = rotMat[3]; rotMatAxis[2] = rotMat[6];
-    }
-    else if (thisJoint.axis[1] == 1) {
-        rotMatAxis[0] = rotMat[1]; rotMatAxis[1] = rotMat[4]; rotMatAxis[2] = rotMat[7];
-    }
-    else if (thisJoint.axis[2] == 1) {
-        rotMatAxis[0] = rotMat[2]; rotMatAxis[1] = rotMat[5]; rotMatAxis[2] = rotMat[8];
-    }
-    else {
-        fprintf(stderr, "GetJacobianForBody: ERROR! A joint appears to be actuated but no axis is defined\n");
-        fprintf(stderr, "GetJacobianForBody: Joint: %s\n", thisJoint.name);
-        return;
+    if (!std::strcmp(thisJoint.type, (char *)"revolute")) {
+        if (thisJoint.axis[0] == 1) {
+            rotMatAxis[0] = rotMat[0]; rotMatAxis[1] = rotMat[3]; rotMatAxis[2] = rotMat[6];
+        }
+        else if (thisJoint.axis[1] == 1) {
+            rotMatAxis[0] = rotMat[1]; rotMatAxis[1] = rotMat[4]; rotMatAxis[2] = rotMat[7];
+        }
+        else if (thisJoint.axis[2] == 1) {
+            rotMatAxis[0] = rotMat[2]; rotMatAxis[1] = rotMat[5]; rotMatAxis[2] = rotMat[8];
+        }
+        else {
+            fprintf(stderr, "GetJacobianForBody: ERROR! A joint appears to be revolute and actuated but no axis is defined\n");
+            fprintf(stderr, "GetJacobianForBody: Joint: %s\n", thisJoint.name);
+            return;
+        }
     }
     cross(distVec, rotMatAxis, crossVec);
     jacobian[6*actuator_index + 0] = rotMatAxis[0];
@@ -396,23 +399,11 @@ void parseURDF(char* urdf_file, int urdflen) {
             // Once </joint> is found, increment the number of joints in this URDF
             joint_num++;
         }
-        // else if (line.find("<link") != std::string::npos) {
-        //     while (line.find("</link>") == std::string::npos) {
-
-        //         if (line.find("<inertial") != std::string::npos) {
-        //             while (line.find("</inertial") == std::string::npos) {
-
-        //             }
-        //         }
-        //     }
-        // }
     }
     // This makes sure the URDF specified opened a valid file
     if (joint_num == 0) {
         fprintf(stderr, "ERROR! No DOFs were found in URDF. Check the location of the URDF.\n");
         urdfParsed = 0;
-        // freeMemory();
-        // exit(-1);
     }
     // Set the value of the global variable
     *num_joints = joint_num;
