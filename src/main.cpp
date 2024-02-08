@@ -5,43 +5,17 @@ extern JointInfo* joints;
 extern int* num_joints;
 
 int main(int argc, char** argv) {
-    char urdf_file[] = "/workspaces/robotics_code/urdf/XT_PRU_noHands.urdf";
-    initializeMemory(urdf_file);
-
-    double transform[16] = {1, 2, 3, 4,
-                            5, 6, 7, 8,
-                            9, 10, 11, 12,
-                            13, 14, 15, 16};
-    double rotMat[9] = {0};
-    double distVec[3] = {0};
-
-    GetRotationMatrixFromTransform(transform, rotMat, distVec);
+    char urdf_file[] = "urdf/XT_PRU_noHands.urdf";
+    int name_size = 24;
+    initializeMemory();
+    parseURDF(urdf_file, name_size);
 
     double q[16] = {0};
     Transform output = {0};
 
-    getTransform(q, (char *)"LeftElbowFlex", &output.transform[0], 0.001);
-
-    for (int i = 0; i < 16; i++) {
-        printf("%0.5f ", output.transform[i]);
-        if ((i+1) % 4 == 0) {
-            printf("\n");
-        }
-    }
-
-    InvertTransform(&output);
-    printf("Inverted: \n");
-
-    for (int i = 0; i < 16; i++) {
-        printf("%0.5f ", output.transform[i]);
-        if ((i+1) % 4 == 0) {
-            printf("\n");
-        }
-    }
-
     q[0] = 1.0; q[1] = 2.0; q[3] = 3.0;
 
-    TransformFromTo(q, (char *)"LeftShoulderFlex", (char *)"RightWristFlex", &output.transform[0], 0.002);
+    TransformFromTo(urdf_file, name_size, q, (char *)"LeftShoulderFlex", (char *)"RightWristFlex", &output.transform[0], 0.002);
 
     for (int i = 0; i < 16; i++) {
         printf("%0.5f ", output.transform[i]);
@@ -59,7 +33,7 @@ int main(int argc, char** argv) {
         }
     }
     
-    GetJacobianForBody(q, bodyName, 0.002, &joints[body_index].jacobian.jacobian[0]);
+    GetJacobianForBody(urdf_file, name_size, q, bodyName, 0.002, &joints[body_index].jacobian.jacobian[0]);
 
     for (int i = 0; i < *num_joints; i++) {
         for (int j = 0; j < 6; j++) {

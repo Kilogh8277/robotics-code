@@ -1,14 +1,14 @@
 #include "kinematics.h"
 
 struct JointInfo* joints;
-static int initialized = 0;
+static int initialized = 0, urdfParsed = 0;
 int *num_joints = (int *)calloc(1, sizeof(int));
 double *mostRecentTimeStep = (double *)calloc(1, sizeof(double));
 
 /*******************************************************************************************
 Function to allocate memory for the array of JointInfo structures
 *******************************************************************************************/
-void initializeMemory(char* urdfPath) {
+void initializeMemory(void) {
     if (!initialized) {
         // Allocate memory for the joints array
         joints = (JointInfo*)calloc(joint_length, sizeof(JointInfo));
@@ -21,7 +21,7 @@ void initializeMemory(char* urdfPath) {
 
         num_joints = (int *)calloc(1, sizeof(int));
 
-        parseURDF(urdfPath);
+        // parseURDF(urdfPath);
         initialized = 1;
     }
 }
@@ -36,6 +36,7 @@ void freeMemory() {
         free(num_joints);
         free(mostRecentTimeStep);
         initialized = 0;
+        urdfParsed = 0;
     }
 }
 
@@ -101,7 +102,10 @@ void SetTransformFromRotMat(double* rotMat, double* distVec, Transform* transfor
 /*******************************************************************************************
 Calculate the transform FROM source TO target
 *******************************************************************************************/
-void TransformFromTo(char* urdfpath, const double* q, const char* source, const char* target, double* transform, double currTimeStep) {
+void TransformFromTo(char* urdfpath, const int urdflen, const double* q, const char* source, const char* target, double* transform, double currTimeStep) {
+    if (!urdfParsed) {
+        parseURDF(urdfpath, urdflen);
+    }
     int sourceIndex = 0, targetIndex = 0;
     double sourceRotMat[9] = {0}, sourceDistVec[3] = {0},
            targetRotMat[9] = {0}, targetDistVec[3] = {0};
@@ -257,7 +261,10 @@ void CalculateJacobianColumn(JointInfo thisJoint, double* jacobian) {
     jacobian[6*actuator_index + 5] = crossVec[2];
 }
 
-void GetJacobianForBody(const double* q, char* bodyName, double currTimeStep, double* jacobian) {
+void GetJacobianForBody(char* urdfpath, const int urdflen, const double* q, char* bodyName, double currTimeStep, double* jacobian) {
+    if (!urdfParsed) {
+        parseURDF(urdfpath, urdflen);
+    }
     if (*mostRecentTimeStep != currTimeStep) {
         updateTransformTree(q);
         *mostRecentTimeStep = currTimeStep;
@@ -282,10 +289,16 @@ void GetJacobianForBody(const double* q, char* bodyName, double currTimeStep, do
 }
 
 // Function to parse URDF file and extract joint information
-void parseURDF(char* urdf_file) {
-    std::ifstream file(urdf_file);
+void parseURDF(char* urdf_file, int urdflen) {
+    char* filename = (char *)calloc(urdflen, sizeof(char));
+    for (int i = 0; i < urdflen; i++) {
+        filename[i] = urdf_file[i];
+    } 
+    printf("Filename: %s\n", filename);
+    std::ifstream file(filename);
     std::string line;
     int joint_num = 0, num_actuators = 0;
+    free(filename);
 
     while (std::getline(file, line)) {
         // If this is the definition of a joint
@@ -397,9 +410,11 @@ void parseURDF(char* urdf_file) {
     // This makes sure the URDF specified opened a valid file
     if (joint_num == 0) {
         fprintf(stderr, "ERROR! No DOFs were found in URDF. Check the location of the URDF.\n");
-        freeMemory();
-        exit(-1);
+        urdfParsed = 0;
+        // freeMemory();
+        // exit(-1);
     }
     // Set the value of the global variable
     *num_joints = joint_num;
+    urdfParsed = 1;
 }

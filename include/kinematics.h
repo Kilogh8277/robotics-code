@@ -1,5 +1,5 @@
-#ifndef __TRANSFORM__H
-#define __TRANSFORM__H
+#ifndef __KINEMATICS__H
+#define __KINEMATICS__H
 
 #include <cstring>
 #include <iostream>
@@ -56,11 +56,11 @@ struct JointInfo {
     void (*actuationFunc)(double, Transform*);  // Function pointer to the actuation function for this joint
 };
 
-void initializeMemory(char* urdfPath);
+void initializeMemory(void);
 
 void freeMemory();
 
-void parseURDF(char* urdf_file);
+void parseURDF(char* urdf_file, int urdflen);
 
 JointInfo* findJointByName(std::string nameToFind);
 
@@ -68,7 +68,7 @@ void GetOffset(char* bodyName, double* offset);
 
 void getTransform(const double* q, const char* body, double* transform, double currTimeStep);
 
-void TransformFromTo(char* urdfpath, const double* q, const char* source, const char* target, double* transform, double currTimeStep);
+void TransformFromTo(char* urdfpath, const int urdflen, const double* q, const char* source, const char* target, double* transform, double currTimeStep);
 
 void updateTransformTree(const double* q);
 
@@ -78,6 +78,6 @@ void SetTransformFromRotMat(double* rotMat, double* distVec, Transform* transfor
 
 void InvertTransform(Transform* T);
 
-void GetJacobianForBody(const double* q, char* bodyName, double currTimeStep, double* jacobian);
+void GetJacobianForBody(char* urdfPath, const int urdflen, const double* q, char* bodyName, double currTimeStep, double* jacobian);
 
-#endif // __TRANSFORM__H
+#endif // __KINEMATICS__H
