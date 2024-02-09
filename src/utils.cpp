@@ -158,7 +158,7 @@ void rotx(double c, struct Transform* T) {
     SetTransformFromRotMat(rotMat, distVec, &rotX);
     Transform temp;
     for (int i = 0; i < 16; i++) {
-        temp[i] = 0.0;
+        temp.transform[i] = 0.0;
     }
     int transformSize[] = {4, 4}, rotMatSize[] = {3, 3}, distVecSize[] = {3, 1};
 
@@ -182,7 +182,7 @@ void roty(double c, struct Transform* T) {
     SetTransformFromRotMat(rotMat, distVec, &rotY);
     Transform temp;
     for (int i = 0; i < 16; i++) {
-        temp[i] = 0.0;
+        temp.transform[i] = 0.0;
     }
     int transformSize[] = {4, 4};
 
@@ -200,7 +200,7 @@ void rotz(double c, struct Transform* T) {
     SetTransformFromRotMat(rotMat, distVec, &rotZ);
     Transform temp;
     for (int i = 0; i < 16; i++) {
-        temp[i] = 0.0;
+        temp.transform[i] = 0.0;
     }
     int transformSize[] = {4, 4};
 
