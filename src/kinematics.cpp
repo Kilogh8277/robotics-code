@@ -85,14 +85,14 @@ void TransformFromTo(const unsigned char* urdfpath, const int urdflen, const dou
     int sourceIndex = 0, targetIndex = 0;
     Transform sourceTransform, targetTransform;
     int transformSize[] = {4, 4};
-    if (!std::strncmp(source, (char *)"World", 5)) {
+    if (!std::strncmp((char *)source, (char *)"World", 5)) {
         sourceIndex = 1;
     }
-    if (!std::strncmp(target, (char *)"World", 5)) {
+    if (!std::strncmp((char *)target, (char *)"World", 5)) {
         targetIndex = 1;
     }
     for (int i = 0; i < joint_length; i++) {
-        if (!std::strncmp(joints[i].name, source, joints[i].name_size)) {
+        if (!std::strncmp(joints[i].name, (char *)source, joints[i].name_size)) {
             // if (sourceIndex == 2) {
             //     getTransform(q, i, &transform[0], currTimeStep);
             //     return;
@@ -100,7 +100,7 @@ void TransformFromTo(const unsigned char* urdfpath, const int urdflen, const dou
             getTransform(q, i, &sourceTransform.transform[0], currTimeStep);
             sourceIndex = 1;
         }
-        if (!std::strncmp(joints[i].name, target, joints[i].name_size)) {
+        if (!std::strncmp(joints[i].name, (char *)target, joints[i].name_size)) {
             // if (targetIndex == 2) {
             //     getTransform(q, i, &targetTransform.transform[0], currTimeStep);
             //     transpose(&targetTransform.transform[0], &transform[0], transformSize);
@@ -259,7 +259,7 @@ void CalculateJacobianColumn(JointInfo thisJoint, double* jacobian) {
     jacobian[6*actuator_index + 5] = crossVec[2];
 }
 
-void GetJacobianForBody(const unsigned char* urdfpath, const int urdflen, const double* q, char* bodyName, double currTimeStep, double* jacobian) {
+void GetJacobianForBody(const unsigned char* urdfpath, const int urdflen, const double* q, const unsigned char* bodyName, double currTimeStep, double* jacobian) {
     if (!(*urdfParsed)) {
         parseURDF(urdfpath, urdflen);
     }
@@ -269,7 +269,7 @@ void GetJacobianForBody(const unsigned char* urdfpath, const int urdflen, const 
     }
     JointInfo thisJoint;
     for (int i = 0; i < *num_joints; i++) {
-        if (!std::strncmp(joints[i].name, bodyName, joints[i].name_size)) {
+        if (!std::strncmp(joints[i].name, (char *)bodyName, joints[i].name_size)) {
             thisJoint = joints[i];
             if (thisJoint.actuated > 0) {
                 CalculateJacobianColumn(thisJoint, &jacobian[0]);
