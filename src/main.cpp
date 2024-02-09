@@ -10,7 +10,7 @@ int main(int argc, char** argv) {
     initializeMemory();
 
     double q[16] = {0};
-    Transform output = {0};
+    Transform output;
 
     q[0] = 1.0; q[1] = 2.0; q[3] = 3.0;
 
