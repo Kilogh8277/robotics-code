@@ -5,8 +5,8 @@ extern JointInfo* joints;
 extern int* num_joints;
 
 int main(int argc, char** argv) {
-    const signed char urdf_file[] = "/workspaces/robotics_code/urdf/XT_PRU_noHands.urdf";
-    int name_size = 51;
+    const signed char urdf_file[] = "/urdf/XT_PRU_noHands.urdf";
+    int name_size = 26;
     initializeMemory();
 
     double q[16] = {0};
