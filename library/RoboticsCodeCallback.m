@@ -28,8 +28,8 @@ classdef RoboticsCodeCallback
                     elseif ~endsWith(thisURDF, '.urdf')
                         fprintf(2, "ERROR! The file specified is not a URDF: %s\n", thisURDF);
                     end
-                    fprintf("%s\n", fullfile(pwd, thisURDF))
-                    fid = fopen(fullfile(pwd, thisURDF), 'r');
+                    fprintf("%s\n", which(thisURDF))
+                    fid = fopen(which(thisURDF), 'r');
                     names = {};
                 
                     tline = fgets(fid);
@@ -66,8 +66,7 @@ classdef RoboticsCodeCallback
 
         function browsebutton(callbackContext)
             [file, path] = uigetfile("MultiSelect","off", "*.urdf");
-            curr_path = relativepath(char(path), char(pwd));
-            set_param(gcb, "urdfpath", strcat(curr_path, file));
+            set_param(gcb, "urdfpath", file);
         end
 
 
