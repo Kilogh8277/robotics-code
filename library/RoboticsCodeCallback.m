@@ -32,6 +32,7 @@ classdef RoboticsCodeCallback
 
                     fid = fopen(which(thisURDF), 'r');
                     names = {};
+                    names_size = 0;
                 
                     tline = fgets(fid);
                     i = 1;
@@ -43,6 +44,8 @@ classdef RoboticsCodeCallback
                             theseIndices    = (greaterThanName(1)+1):(greaterThanName(2)-1);
                             names{i}        = tline(theseIndices);
                             i = i + 1;
+                        elseif (contains(tline, "type=") && (contains(tline, "revolute") || contains(tline, "prismatic")))
+                            names_size = names_size + 1;
                         end
                         tline = fgets(fid);
                     end
@@ -53,6 +56,8 @@ classdef RoboticsCodeCallback
                             thisMask.Parameters(i).TypeOptions = names;
                         elseif strcmp(thisMask.Parameters(i).Name, "target")
                             thisMask.Parameters(i).TypeOptions = names;
+                        elseif strcmp(thisMask.Parameters(i).Name, "names_length")
+                            thisMask.Parameters(i).Value = string(names_size);
                         end
                     end
                     
