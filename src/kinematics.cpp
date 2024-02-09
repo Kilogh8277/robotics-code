@@ -81,10 +81,18 @@ Calculate the transform FROM source TO target
 void TransformFromTo(const signed char* urdfpath, const int urdflen, const double* q, const signed char* source, const signed char* target, double* transform, double currTimeStep) {
     if (!(*urdfParsed)) {
         #ifdef SIMULINK_REAL_TIME
-            slrealtime::log_info("Parsing URDF!");
+            slrealtime::log_info("Parsing URDF from transform!");
         #endif
         parseURDF(urdfpath, urdflen);
     }
+    #ifdef SIMULINK_REAL_TIME
+        slrealtime::log_info("Getting a transform!");
+        char buf[250];
+        std::sprintf(buf, "Source name: %s", source);
+        slrealtime::log_info(buf);
+        std::sprintf(buf, "Target name: %s", target);
+        slrealtime::log_info(buf);
+    #endif
     int sourceIndex = 0, targetIndex = 0;
     Transform sourceTransform, targetTransform;
     int transformSize[] = {4, 4};
@@ -265,10 +273,16 @@ void CalculateJacobianColumn(JointInfo thisJoint, double* jacobian) {
 void GetJacobianForBody(const signed char* urdfpath, const int urdflen, const double* q, const signed char* bodyName, double currTimeStep, double* jacobian) {
     if (!(*urdfParsed)) {
         #ifdef SIMULINK_REAL_TIME
-            slrealtime::log_info("Parsing URDF!");
+            slrealtime::log_info("Parsing URDF from Jacobian!");
         #endif
         parseURDF(urdfpath, urdflen);
     }
+    #ifdef SIMULINK_REAL_TIME
+        slrealtime::log_info("Getting a Jacobian!");
+        char buf[250];
+        std::sprintf(buf, "Body name: %s", bodyName);
+        slrealtiime::log_info(buf);
+    #endif
     if (*mostRecentTimeStep != currTimeStep) {
         updateTransformTree(q);
         *mostRecentTimeStep = currTimeStep;
