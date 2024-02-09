@@ -192,7 +192,10 @@ void updateTransformTree(const double* q) {
 
         transpose(rotMatXYZ, rotMat, rotSize);
         // matrixMultiply(rotMatXYZ, rotSize, temp, vecSize, distVec);
-        Transform result = {0};
+        Transform result;
+        for (int i = 0; i < 16; i++) {
+            result.transform[i] = 0.0;
+        }
         SetTransformFromRotMat(rotMat, temp, &currTransform);
         if (joints[i].actuated > 0) {
             joints[i].actuationFunc(-q[joints[i].actuator], &currTransform);
