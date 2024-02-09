@@ -4,6 +4,7 @@ classdef RoboticsCodeCallback
 
 
         function urdfpath(callbackContext)
+            
             thisURDFParam = get_param(gcb, "urdfpath");
             try
                 thisURDF = char(evalin('base', thisURDFParam));
@@ -28,7 +29,7 @@ classdef RoboticsCodeCallback
                     elseif ~endsWith(thisURDF, '.urdf')
                         fprintf(2, "ERROR! The file specified is not a URDF: %s\n", thisURDF);
                     end
-                    fprintf("%s\n", which(thisURDF))
+
                     fid = fopen(which(thisURDF), 'r');
                     names = {};
                 
