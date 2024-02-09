@@ -51,8 +51,8 @@ void initializeMemory(void);
 
 void freeMemory();
 
-void TransformFromTo(const unsigned char* urdfpath, const int urdflen, const double* q, const unsigned char* source, const unsigned char* target, double* transform, double currTimeStep);
+void TransformFromTo(const char* urdfpath, const int urdflen, const double* q, const char* source, const char* target, double* transform, double currTimeStep);
 
-void GetJacobianForBody(const unsigned char* urdfpath, const int urdflen, const double* q, const unsigned char* bodyName, double currTimeStep, double* jacobian);
+void GetJacobianForBody(const char* urdfpath, const int urdflen, const double* q, const char* bodyName, double currTimeStep, double* jacobian);
 
 #endif // __KINEMATICS__H
