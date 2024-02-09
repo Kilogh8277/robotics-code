@@ -8,6 +8,10 @@
 
 #include "utils.h"
 
+#ifdef SIMULINK_REAL_TIME
+#include "slrt_log.hpp"
+#endif
+
 #define joint_length 50
 
 struct Transform {

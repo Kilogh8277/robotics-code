@@ -80,6 +80,9 @@ Calculate the transform FROM source TO target
 *******************************************************************************************/
 void TransformFromTo(const signed char* urdfpath, const int urdflen, const double* q, const signed char* source, const signed char* target, double* transform, double currTimeStep) {
     if (!(*urdfParsed)) {
+        #ifdef SIMULINK_REAL_TIME
+            slrealtime::log_info("Parsing URDF!");
+        #endif
         parseURDF(urdfpath, urdflen);
     }
     int sourceIndex = 0, targetIndex = 0;
@@ -261,6 +264,9 @@ void CalculateJacobianColumn(JointInfo thisJoint, double* jacobian) {
 
 void GetJacobianForBody(const signed char* urdfpath, const int urdflen, const double* q, const signed char* bodyName, double currTimeStep, double* jacobian) {
     if (!(*urdfParsed)) {
+        #ifdef SIMULINK_REAL_TIME
+            slrealtime::log_info("Parsing URDF!");
+        #endif
         parseURDF(urdfpath, urdflen);
     }
     if (*mostRecentTimeStep != currTimeStep) {
@@ -288,6 +294,9 @@ void GetJacobianForBody(const signed char* urdfpath, const int urdflen, const do
 
 // Function to parse URDF file and extract joint information
 void parseURDF(const signed char* urdf_file, int urdflen) {
+    #ifdef SIMULINK_REAL_TIME
+        char buf[50];
+    #endif
     char* filename = (char *)calloc(urdflen, sizeof(char));
     for (int i = 0; i < urdflen; i++) {
         filename[i] = urdf_file[i];
@@ -312,7 +321,7 @@ void parseURDF(const signed char* urdf_file, int urdflen) {
                     memcpy(&newJoint->name, line.substr(name_pos, name_end - name_pos).c_str(), name_end - name_pos);
                     newJoint->name_size = (size_t)(name_end - name_pos);
                 }
-
+                
                 // The type should be on the same line
                 std::size_t type_pos = line.find("type=\"");
                 if (type_pos != std::string::npos) {
@@ -391,6 +400,10 @@ void parseURDF(const signed char* urdf_file, int urdflen) {
                 // Retrieve the next line
                 std::getline(file, line);
             }
+            #ifdef SIMULINK_REAL_TIME
+                std::sprintf(buf, "Found joint: %s", newJoint->name);
+                slrealtime::log_info(buf);
+            #endif
             // Once </joint> is found, increment the number of joints in this URDF
             joint_num++;
         }
