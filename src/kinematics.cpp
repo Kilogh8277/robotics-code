@@ -1,7 +1,7 @@
 #include "kinematics.h"
 
 // Simulink should not have access to these functions -- helper functions
-void parseURDF(const char* urdf_file, int urdflen);
+void parseURDF(const signed char* urdf_file, int urdflen);
 JointInfo* findJointByName(std::string nameToFind);
 void GetOffset(char* bodyName, double* offset);
 void getTransform(const double* q, const int body_index, double* transform, double currTimeStep);
@@ -78,7 +78,7 @@ void GetOffset(char* bodyName, double* offset) {
 /*******************************************************************************************
 Calculate the transform FROM source TO target
 *******************************************************************************************/
-void TransformFromTo(const char* urdfpath, const int urdflen, const double* q, const char* source, const char* target, double* transform, double currTimeStep) {
+void TransformFromTo(const signed char* urdfpath, const int urdflen, const double* q, const signed char* source, const signed char* target, double* transform, double currTimeStep) {
     if (!(*urdfParsed)) {
         parseURDF(urdfpath, urdflen);
     }
@@ -259,7 +259,7 @@ void CalculateJacobianColumn(JointInfo thisJoint, double* jacobian) {
     jacobian[6*actuator_index + 5] = crossVec[2];
 }
 
-void GetJacobianForBody(const char* urdfpath, const int urdflen, const double* q, const char* bodyName, double currTimeStep, double* jacobian) {
+void GetJacobianForBody(const signed char* urdfpath, const int urdflen, const double* q, const signed char* bodyName, double currTimeStep, double* jacobian) {
     if (!(*urdfParsed)) {
         parseURDF(urdfpath, urdflen);
     }
@@ -287,7 +287,7 @@ void GetJacobianForBody(const char* urdfpath, const int urdflen, const double* q
 }
 
 // Function to parse URDF file and extract joint information
-void parseURDF(const char* urdf_file, int urdflen) {
+void parseURDF(const signed char* urdf_file, int urdflen) {
     char* filename = (char *)calloc(urdflen, sizeof(char));
     for (int i = 0; i < urdflen; i++) {
         filename[i] = urdf_file[i];

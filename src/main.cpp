@@ -5,7 +5,7 @@ extern JointInfo* joints;
 extern int* num_joints;
 
 int main(int argc, char** argv) {
-    const char urdf_file[] = "/workspaces/robotics_code/urdf/XT_PRU_noHands.urdf";
+    const signed char urdf_file[] = "/workspaces/robotics_code/urdf/XT_PRU_noHands.urdf";
     int name_size = 51;
     initializeMemory();
 
@@ -14,7 +14,7 @@ int main(int argc, char** argv) {
 
     q[0] = 1.0; q[1] = 2.0; q[3] = 3.0;
 
-    TransformFromTo(urdf_file, name_size, (const double*)q, (const char *)"LeftShoulderAbAd", (const char *)"World", &output.transform[0], 0.002);
+    TransformFromTo(urdf_file, name_size, (const double*)q, (const signed char *)"LeftShoulderAbAd", (const signed char *)"World", &output.transform[0], 0.002);
 
     printf("\n");
     for (int i = 0; i < 16; i++) {
@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
     }
     printf("\n\n");
 
-    const char bodyName[] = "LeftElbowFlex";
+    const signed char bodyName[] = "LeftElbowFlex";
     int body_index = 0;
     for (int i = 0; i < *num_joints; i++) {
         if (!std::strncmp(joints[i].name, (const char *)bodyName, joints[i].name_size)) {
