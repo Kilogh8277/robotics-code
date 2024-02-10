@@ -281,7 +281,7 @@ void GetJacobianForBody(const signed char* urdfpath, const int urdflen, const do
         slrealtime::log_info("Getting a Jacobian!");
         char buf[250];
         std::sprintf(buf, "Body name: %s", bodyName);
-        slrealtiime::log_info(buf);
+        slrealtime::log_info(buf);
     #endif
     if (*mostRecentTimeStep != currTimeStep) {
         updateTransformTree(q);
