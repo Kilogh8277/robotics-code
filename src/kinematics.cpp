@@ -87,11 +87,8 @@ void TransformFromTo(const signed char* urdfpath, const int urdflen, const doubl
     }
     #ifdef SIMULINK_REAL_TIME
         slrealtime::log_info("Getting a transform!");
-        char buf[250];
-        std::sprintf(buf, "Source name: %s", source);
-        slrealtime::log_info(buf);
-        std::sprintf(buf, "Target name: %s", target);
-        slrealtime::log_info(buf);
+        slrealtime::log_info(source);
+        slrealtime::log_info(target);
     #endif
     int sourceIndex = 0, targetIndex = 0;
     Transform sourceTransform, targetTransform;
@@ -279,9 +276,7 @@ void GetJacobianForBody(const signed char* urdfpath, const int urdflen, const do
     }
     #ifdef SIMULINK_REAL_TIME
         slrealtime::log_info("Getting a Jacobian!");
-        char buf[250];
-        std::sprintf(buf, "Body name: %s", bodyName);
-        slrealtime::log_info(buf);
+        slrealtime::log_info(bodyName);
     #endif
     if (*mostRecentTimeStep != currTimeStep) {
         updateTransformTree(q);
