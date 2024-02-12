@@ -29,6 +29,7 @@ void initializeMemory(void) {
         num_joints = (int *)calloc(1, sizeof(int));
         urdfParsed = (int *)calloc(1, sizeof(int));
         mostRecentTimeStep = (double *)calloc(1, sizeof(double));
+        *mostRecentTimeStep = -1;
         
         initialized = 1;
     }
@@ -235,13 +236,13 @@ void InvertTransform(Transform* T) {
     SetTransformFromRotMat(rotMatOut, distVecOut, T);
 }
 
-void CalculateJacobianColumn(JointInfo masterJoint, JointInfo thisJoint, double* jacobian) {
+void CalculateJacobianColumn(JointInfo* masterJoint, JointInfo thisJoint) {
     Transform thisBodyTransform; double rotMat[9] = {0}, distVec[3] = {0}, rotMatAxis[3] = {0}; 
     Transform masterTransform; double masterRotMat[9] = {0}, masterDistVec[3] = {0}; 
     double crossVec[3] = {0};
     uint8_t actuator_index = thisJoint.actuator;
     thisBodyTransform   =   thisJoint.transform;
-    masterTransform     =   masterJoint.transform;
+    masterTransform     =   masterJoint->transform;
     GetRotationMatrixFromTransform(&thisBodyTransform.transform[0], rotMat, distVec);
     GetRotationMatrixFromTransform(&masterTransform.transform[0], masterRotMat, masterDistVec);
     if (!std::strcmp(thisJoint.type, (char *)"revolute")) {
@@ -264,12 +265,12 @@ void CalculateJacobianColumn(JointInfo masterJoint, JointInfo thisJoint, double*
         distVec[i] = masterDistVec[i] - distVec[i];
     }
     cross(rotMatAxis, distVec, crossVec);
-    jacobian[6*actuator_index + 0] = rotMatAxis[0];
-    jacobian[6*actuator_index + 1] = rotMatAxis[1];
-    jacobian[6*actuator_index + 2] = rotMatAxis[2];
-    jacobian[6*actuator_index + 3] = crossVec[0];
-    jacobian[6*actuator_index + 4] = crossVec[1];
-    jacobian[6*actuator_index + 5] = crossVec[2];
+    masterJoint->jacobian.jacobian[6*actuator_index + 0] = rotMatAxis[0];
+    masterJoint->jacobian.jacobian[6*actuator_index + 1] = rotMatAxis[1];
+    masterJoint->jacobian.jacobian[6*actuator_index + 2] = rotMatAxis[2];
+    masterJoint->jacobian.jacobian[6*actuator_index + 3] = crossVec[0];
+    masterJoint->jacobian.jacobian[6*actuator_index + 4] = crossVec[1];
+    masterJoint->jacobian.jacobian[6*actuator_index + 5] = crossVec[2];
 }
 
 void GetJacobianForBody(const signed char* urdfpath, const int urdflen, const double* q, const signed char* bodyName, double currTimeStep, double* jacobian) {
@@ -286,12 +287,12 @@ void GetJacobianForBody(const signed char* urdfpath, const int urdflen, const do
         updateTransformTree(q);
         *mostRecentTimeStep = currTimeStep;
     }
-    JointInfo thisJoint, masterJoint;
+    JointInfo thisJoint, *masterJoint;
     for (int i = 0; i < *num_joints; i++) {
         if (!std::strncmp(joints[i].name, (char *)bodyName, joints[i].name_size)) {
-            masterJoint = joints[i]; thisJoint = joints[i];
-            if (masterJoint.actuated > 0) {
-                CalculateJacobianColumn(masterJoint, thisJoint, &jacobian[0]);
+            masterJoint = &joints[i]; thisJoint = joints[i];
+            if (masterJoint->actuated > 0) {
+                CalculateJacobianColumn(masterJoint, thisJoint);
             }
             if (thisJoint.parent_link != NULL) {
                 do  {
@@ -307,13 +308,13 @@ void GetJacobianForBody(const signed char* urdfpath, const int urdflen, const do
                         #endif
                     }
                     if (thisJoint.actuated > 0) {
-                        CalculateJacobianColumn(masterJoint, thisJoint, &jacobian[0]);
+                        CalculateJacobianColumn(masterJoint, thisJoint);
                     }
                 } while (thisJoint.parent_link != NULL);
             }
+            memcpy(&jacobian[0], &masterJoint->jacobian.jacobian[0], sizeof(Jacobian));
             return;
         }
-
     }
 }
 

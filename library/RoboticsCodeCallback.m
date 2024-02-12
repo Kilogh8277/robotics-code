@@ -69,6 +69,17 @@ classdef RoboticsCodeCallback
                         end
                     end
                     
+                    outputSignalNames = get_param(gcb, "OutputSignalNames");
+                    if (~isempty(outputSignalNames))
+                        try 
+                            set_param(gcb, "source", outputSignalNames{1});
+                        catch
+                            if ~(char(isempty(outputSignalNames{1})))
+                                fprintf(2, "There is no body named %s\n", outputSignalNames{1})
+                            end
+                        end
+                    end
+
                     fclose(fid);
 
                 catch ME
@@ -80,6 +91,9 @@ classdef RoboticsCodeCallback
 
         function browsebutton(callbackContext)
             [file, path] = uigetfile("MultiSelect","off", "*.urdf");
+            if file == 0
+                return
+            end
             set_param(gcb, "urdfpath", file);
         end
 
