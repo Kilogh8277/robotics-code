@@ -85,9 +85,9 @@ void TransformFromTo(const signed char* urdfpath, const int urdflen, const doubl
         #endif
         parseURDF(urdfpath, urdflen);
     }
-    #ifdef SIMULINK_REAL_TIME
-        slrealtime::log_info("Getting a transform!");
-    #endif
+    // #ifdef SIMULINK_REAL_TIME
+    //     slrealtime::log_info("Getting a transform!");
+    // #endif
     int sourceIndex = 0, targetIndex = 0;
     Transform sourceTransform, targetTransform;
     int transformSize[] = {4, 4};
@@ -272,9 +272,9 @@ void GetJacobianForBody(const signed char* urdfpath, const int urdflen, const do
         #endif
         parseURDF(urdfpath, urdflen);
     }
-    #ifdef SIMULINK_REAL_TIME
-        slrealtime::log_info("Getting a Jacobian!");
-    #endif
+    // #ifdef SIMULINK_REAL_TIME
+    //     slrealtime::log_info("Getting a Jacobian!");
+    // #endif
     if (*mostRecentTimeStep != currTimeStep) {
         updateTransformTree(q);
         *mostRecentTimeStep = currTimeStep;
@@ -286,12 +286,24 @@ void GetJacobianForBody(const signed char* urdfpath, const int urdflen, const do
             if (thisJoint.actuated > 0) {
                 CalculateJacobianColumn(thisJoint, &jacobian[0]);
             }
+            if (thisJoint.parent_link != NULL) {
                 do  {
-                    thisJoint = *thisJoint.parent_link;
+                    try {
+                        thisJoint = *thisJoint.parent_link;
+                    }
+                    catch(...) {
+                        #ifdef SIMULINK_REAL_TIME
+                            slrealtime::log_fatal("Grabbing a Jacobian for the following link: ");
+                            slrealtime::log_fatal(thisJoint.name);
+                        #else
+                            fprintf(stderr, "Grabbing a Jacobian for the following link: %s\n", thisJoint.name);
+                        #endif
+                    }
                     if (thisJoint.actuated > 0) {
                         CalculateJacobianColumn(thisJoint, &jacobian[0]);
                     }
                 } while (thisJoint.parent_link != NULL);
+            }
             return;
         }
 
@@ -303,15 +315,21 @@ void parseURDF(const signed char* urdf_file, int urdflen) {
     #ifdef SIMULINK_REAL_TIME
         char buf[50];
     #endif
-    char* filename = (char *)calloc(urdflen, sizeof(char));
-    for (int i = 0; i < urdflen; i++) {
-        filename[i] = urdf_file[i];
-    } 
+    char filename[250];
+    std::snprintf(filename, urdflen+1, "%s", urdf_file);
+    #ifdef SIMULINK_REAL_TIME
+        slrealtime::log_info("Filename: ");
+        slrealtime::log_info((char *)filename);
+        slrealtime::log_info("URDF Length: ");
+        char urdflength[5];
+        sprintf(urdflength, "%d", urdflen);
+        slrealtime::log_info((char *)urdflength);
+    #endif
     printf("Filename: %s\n", filename);
     std::ifstream file(filename);
     std::string line;
     int joint_num = 0, num_actuators = 0;
-    free(filename);
+    // free(filename);
 
     while (std::getline(file, line)) {
         // If this is the definition of a joint
@@ -416,7 +434,14 @@ void parseURDF(const signed char* urdf_file, int urdflen) {
     }
     // This makes sure the URDF specified opened a valid file
     if (joint_num == 0) {
-        fprintf(stderr, "ERROR! No DOFs were found in URDF. Check the location of the URDF.\n");
+        #ifdef SIMULINK_REAL_TIME
+            memset(buf, 0, 50*sizeof(char));
+            std::sprintf(buf, "%s", (char *)filename);
+            slrealtime::log_error("No joints were found due to parsing the URDF");
+            slrealtime::log_error(buf);
+        #else
+            fprintf(stderr, "ERROR! No DOFs were found in URDF. Check the location of the URDF.\n");
+        #endif
         *urdfParsed = 0;
     }
     // Set the value of the global variable
