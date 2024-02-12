@@ -5,8 +5,8 @@ extern JointInfo* joints;
 extern int* num_joints;
 
 int main(int argc, char** argv) {
-    const signed char urdf_file[] = "/urdf/XT_PRU_noHands.urdf";
-    int name_size = 26;
+    const signed char urdf_file[] = "../urdf/XT_PRU_noHands.urdf";
+    int name_size = 28;
     initializeMemory();
 
     double q[16] = {0};
@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
     }
     printf("\n\n");
 
-    const signed char bodyName[] = "LeftElbowFlex";
+    const signed char bodyName[] = "RightLoadPointB";
     int body_index = 0;
     for (int i = 0; i < *num_joints; i++) {
         if (!std::strncmp(joints[i].name, (const char *)bodyName, joints[i].name_size)) {

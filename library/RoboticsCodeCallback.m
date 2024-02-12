@@ -53,9 +53,17 @@ classdef RoboticsCodeCallback
                     thisMask = get_param(gcb, "MaskObject");
                     for i = 1:length(thisMask.Parameters)
                         if strcmp(thisMask.Parameters(i).Name, "source")
+                            thisVal = thisMask.Parameters(i).Value;
                             thisMask.Parameters(i).TypeOptions = names;
+                            % if (any(thisMask.Parameters(i).TypeOptions == thisVal))
+                            %     thisMask.Parameters(i).Value = thisVal;
+                            % end
                         elseif strcmp(thisMask.Parameters(i).Name, "target")
+                            thisVal = thisMask.Parameters(i).Value;
                             thisMask.Parameters(i).TypeOptions = names;
+                            % if (any(thisMask.Parameters(i).TypeOptions == thisVal))
+                            %     thisMask.Parameters(i).Value = thisVal;
+                            % end
                         elseif strcmp(thisMask.Parameters(i).Name, "names_length")
                             thisMask.Parameters(i).Value = string(names_size);
                         end

@@ -235,19 +235,23 @@ void InvertTransform(Transform* T) {
     SetTransformFromRotMat(rotMatOut, distVecOut, T);
 }
 
-void CalculateJacobianColumn(JointInfo thisJoint, double* jacobian) {
-    Transform thisBodyTransform; double rotMat[9] = {0}, distVec[3] = {0}, rotMatAxis[3] = {0}, crossVec[3] = {0};
+void CalculateJacobianColumn(JointInfo masterJoint, JointInfo thisJoint, double* jacobian) {
+    Transform thisBodyTransform; double rotMat[9] = {0}, distVec[3] = {0}, rotMatAxis[3] = {0}; 
+    Transform masterTransform; double masterRotMat[9] = {0}, masterDistVec[3] = {0}; 
+    double crossVec[3] = {0};
     uint8_t actuator_index = thisJoint.actuator;
     thisBodyTransform   =   thisJoint.transform;
+    masterTransform     =   masterJoint.transform;
     GetRotationMatrixFromTransform(&thisBodyTransform.transform[0], rotMat, distVec);
+    GetRotationMatrixFromTransform(&masterTransform.transform[0], masterRotMat, masterDistVec);
     if (!std::strcmp(thisJoint.type, (char *)"revolute")) {
-        if (thisJoint.axis[0] == 1) {
+        if (thisJoint.axis[0] != 0) {
             rotMatAxis[0] = rotMat[0]; rotMatAxis[1] = rotMat[3]; rotMatAxis[2] = rotMat[6];
         }
-        else if (thisJoint.axis[1] == 1) {
+        else if (thisJoint.axis[1] != 0) {
             rotMatAxis[0] = rotMat[1]; rotMatAxis[1] = rotMat[4]; rotMatAxis[2] = rotMat[7];
         }
-        else if (thisJoint.axis[2] == 1) {
+        else if (thisJoint.axis[2] != 0) {
             rotMatAxis[0] = rotMat[2]; rotMatAxis[1] = rotMat[5]; rotMatAxis[2] = rotMat[8];
         }
         else {
@@ -256,7 +260,10 @@ void CalculateJacobianColumn(JointInfo thisJoint, double* jacobian) {
             return;
         }
     }
-    cross(distVec, rotMatAxis, crossVec);
+    for (int i = 0; i < 3; i++) {
+        distVec[i] = masterDistVec[i] - distVec[i];
+    }
+    cross(rotMatAxis, distVec, crossVec);
     jacobian[6*actuator_index + 0] = rotMatAxis[0];
     jacobian[6*actuator_index + 1] = rotMatAxis[1];
     jacobian[6*actuator_index + 2] = rotMatAxis[2];
@@ -279,12 +286,12 @@ void GetJacobianForBody(const signed char* urdfpath, const int urdflen, const do
         updateTransformTree(q);
         *mostRecentTimeStep = currTimeStep;
     }
-    JointInfo thisJoint;
+    JointInfo thisJoint, masterJoint;
     for (int i = 0; i < *num_joints; i++) {
         if (!std::strncmp(joints[i].name, (char *)bodyName, joints[i].name_size)) {
-            thisJoint = joints[i];
-            if (thisJoint.actuated > 0) {
-                CalculateJacobianColumn(thisJoint, &jacobian[0]);
+            masterJoint = joints[i]; thisJoint = joints[i];
+            if (masterJoint.actuated > 0) {
+                CalculateJacobianColumn(masterJoint, thisJoint, &jacobian[0]);
             }
             if (thisJoint.parent_link != NULL) {
                 do  {
@@ -300,7 +307,7 @@ void GetJacobianForBody(const signed char* urdfpath, const int urdflen, const do
                         #endif
                     }
                     if (thisJoint.actuated > 0) {
-                        CalculateJacobianColumn(thisJoint, &jacobian[0]);
+                        CalculateJacobianColumn(masterJoint, thisJoint, &jacobian[0]);
                     }
                 } while (thisJoint.parent_link != NULL);
             }
