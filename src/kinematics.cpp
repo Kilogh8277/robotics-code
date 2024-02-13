@@ -344,7 +344,7 @@ void GetJacobianForBody(const signed char* urdfpath, const int urdflen, const do
 void SetActuatorNumbers(JointInfo* thisJoint, int& actuator_number) {
     if (thisJoint->actuated) {
         #ifdef SIMULINK_REAL_TIME
-            slrealtime::log_info(thisJoint->name)
+            slrealtime::log_info(thisJoint->name);
         #else
             printf("%s: %d\n", thisJoint->name, actuator_number+1);
         #endif
