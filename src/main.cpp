@@ -12,9 +12,9 @@ int main(int argc, char** argv) {
     double q[16] = {0};
     Transform output;
 
-    q[0] = 1.0; q[1] = 2.0; q[3] = 3.0;
+    q[0] = 1.0; q[1] = 2.0; q[2] = 3.0, q[8] = 1.0;
 
-    TransformFromTo(urdf_file, name_size, (const double*)q, (const signed char *)"LeftShoulderAbAd", (const signed char *)"World", &output.transform[0], 0.002);
+    TransformFromTo(urdf_file, name_size, (const double*)q, (const signed char *)"LeftShoulderFlex", (const signed char *)"World", &output.transform[0], 0.002);
 
     printf("\n");
     for (int i = 0; i < 16; i++) {
@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
     }
     printf("\n\n");
 
-    const signed char bodyName[] = "RightLoadPointB";
+    const signed char bodyName[] = "LeftShoulderFlex";
     int body_index = 0;
     for (int i = 0; i < *num_joints; i++) {
         if (!std::strncmp(joints[i].name, (const char *)bodyName, joints[i].name_size)) {

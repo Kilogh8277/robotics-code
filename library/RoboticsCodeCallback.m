@@ -74,7 +74,7 @@ classdef RoboticsCodeCallback
                         try 
                             set_param(gcb, "source", outputSignalNames{1});
                         catch
-                            if ~(char(isempty(outputSignalNames{1})))
+                            if ~(isempty(char(outputSignalNames{1})))
                                 fprintf(2, "There is no body named %s\n", outputSignalNames{1})
                             end
                         end
@@ -83,7 +83,7 @@ classdef RoboticsCodeCallback
                     fclose(fid);
 
                 catch ME
-                    fprintf("%s\n", ME.message)
+                    fprintf(2, "%s\n", ME.message)
                     fclose(fid);
                 end
         end

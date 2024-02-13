@@ -240,31 +240,57 @@ void CalculateJacobianColumn(JointInfo* masterJoint, JointInfo thisJoint) {
     Transform thisBodyTransform; double rotMat[9] = {0}, distVec[3] = {0}, rotMatAxis[3] = {0}; 
     Transform masterTransform; double masterRotMat[9] = {0}, masterDistVec[3] = {0}; 
     double crossVec[3] = {0};
+
+    // The actuator to which this is relative
     uint8_t actuator_index = thisJoint.actuator;
     thisBodyTransform   =   thisJoint.transform;
+
+    // The transform to the frame of the master joint
     masterTransform     =   masterJoint->transform;
     GetRotationMatrixFromTransform(&thisBodyTransform.transform[0], rotMat, distVec);
     GetRotationMatrixFromTransform(&masterTransform.transform[0], masterRotMat, masterDistVec);
+
+    // If this is a revolute joint, calculate the column with the rotation matrix and the distance between the frames
     if (!std::strcmp(thisJoint.type, (char *)"revolute")) {
         if (thisJoint.axis[0] != 0) {
-            rotMatAxis[0] = rotMat[0]; rotMatAxis[1] = rotMat[3]; rotMatAxis[2] = rotMat[6];
+            rotMatAxis[0] = thisJoint.axis[0] * rotMat[0]; rotMatAxis[1] = thisJoint.axis[0] * rotMat[3]; rotMatAxis[2] = thisJoint.axis[0] * rotMat[6];
         }
         else if (thisJoint.axis[1] != 0) {
-            rotMatAxis[0] = rotMat[1]; rotMatAxis[1] = rotMat[4]; rotMatAxis[2] = rotMat[7];
+            rotMatAxis[0] = thisJoint.axis[1] * rotMat[1]; rotMatAxis[1] = thisJoint.axis[1] * rotMat[4]; rotMatAxis[2] = thisJoint.axis[1] * rotMat[7];
         }
         else if (thisJoint.axis[2] != 0) {
-            rotMatAxis[0] = rotMat[2]; rotMatAxis[1] = rotMat[5]; rotMatAxis[2] = rotMat[8];
+            rotMatAxis[0] = thisJoint.axis[2] * rotMat[2]; rotMatAxis[1] = thisJoint.axis[2] * rotMat[5]; rotMatAxis[2] = thisJoint.axis[2] * rotMat[8];
         }
         else {
             fprintf(stderr, "GetJacobianForBody: ERROR! A joint appears to be revolute and actuated but no axis is defined\n");
             fprintf(stderr, "GetJacobianForBody: Joint: %s\n", thisJoint.name);
             return;
         }
+        for (int i = 0; i < 3; i++) {
+            distVec[i] = masterDistVec[i] - distVec[i];
+        }
+        cross(rotMatAxis, distVec, crossVec);
     }
-    for (int i = 0; i < 3; i++) {
-        distVec[i] = masterDistVec[i] - distVec[i];
+
+    // If the joint is a prismatic joint, displace in the direction in which the axis is defined
+    else if (!std::strcmp(thisJoint.type, (char *)"prismatic")) {
+        if (thisJoint.axis[0] != 0) {
+            crossVec[0] = (double)thisJoint.axis[0];
+        }
+        else if (thisJoint.axis[1] != 0) {
+            crossVec[1] = (double)thisJoint.axis[1];
+        }
+        else if (thisJoint.axis[2] != 0) {
+            crossVec[2] = (double)thisJoint.axis[2];
+        }
+        else {
+            fprintf(stderr, "GetJacobianForBody: ERROR! A joint appears to be prismatic and actuated but no axis is defined\n");
+            fprintf(stderr, "GetJacobianForBody: Joint: %s\n", thisJoint.name);
+            return;
+        }
     }
-    cross(rotMatAxis, distVec, crossVec);
+    
+    // Set the column to the values calculated above
     masterJoint->jacobian.jacobian[6*actuator_index + 0] = rotMatAxis[0];
     masterJoint->jacobian.jacobian[6*actuator_index + 1] = rotMatAxis[1];
     masterJoint->jacobian.jacobian[6*actuator_index + 2] = rotMatAxis[2];
@@ -280,9 +306,6 @@ void GetJacobianForBody(const signed char* urdfpath, const int urdflen, const do
         #endif
         parseURDF(urdfpath, urdflen);
     }
-    // #ifdef SIMULINK_REAL_TIME
-    //     slrealtime::log_info("Getting a Jacobian!");
-    // #endif
     if (*mostRecentTimeStep != currTimeStep) {
         updateTransformTree(q);
         *mostRecentTimeStep = currTimeStep;
@@ -301,10 +324,10 @@ void GetJacobianForBody(const signed char* urdfpath, const int urdflen, const do
                     }
                     catch(...) {
                         #ifdef SIMULINK_REAL_TIME
-                            slrealtime::log_fatal("Grabbing a Jacobian for the following link: ");
+                            slrealtime::log_fatal("Failed to grab a Jacobian for the following link: ");
                             slrealtime::log_fatal(thisJoint.name);
                         #else
-                            fprintf(stderr, "Grabbing a Jacobian for the following link: %s\n", thisJoint.name);
+                            fprintf(stderr, "Failed to grab a Jacobian for the following link: %s\n", thisJoint.name);
                         #endif
                     }
                     if (thisJoint.actuated > 0) {
@@ -318,6 +341,21 @@ void GetJacobianForBody(const signed char* urdfpath, const int urdflen, const do
     }
 }
 
+void SetActuatorNumbers(JointInfo* thisJoint, int& actuator_number) {
+    if (thisJoint->actuated) {
+        #ifdef SIMULINK_REAL_TIME
+            slrealtime::log_info(thisJoint->name)
+        #else
+            printf("%s: %d\n", thisJoint->name, actuator_number+1);
+        #endif
+        thisJoint->actuator = actuator_number++;
+    }
+    // For each of the children of this link, set the actuator number
+    for (int i = 0; i < thisJoint->numChildren; i++) {
+        SetActuatorNumbers(thisJoint->child_links[i], actuator_number);
+    }
+}
+
 // Function to parse URDF file and extract joint information
 void parseURDF(const signed char* urdf_file, int urdflen) {
     #ifdef SIMULINK_REAL_TIME
@@ -328,16 +366,12 @@ void parseURDF(const signed char* urdf_file, int urdflen) {
     #ifdef SIMULINK_REAL_TIME
         slrealtime::log_info("Filename: ");
         slrealtime::log_info((char *)filename);
-        slrealtime::log_info("URDF Length: ");
-        char urdflength[5];
-        sprintf(urdflength, "%d", urdflen);
-        slrealtime::log_info((char *)urdflength);
+    #else
+        printf("Filename: %s\n", filename);
     #endif
-    printf("Filename: %s\n", filename);
     std::ifstream file(filename);
     std::string line;
     int joint_num = 0, num_actuators = 0;
-    // free(filename);
 
     while (std::getline(file, line)) {
         // If this is the definition of a joint
@@ -362,12 +396,12 @@ void parseURDF(const signed char* urdf_file, int urdflen) {
                     memcpy(&newJoint->type, line.substr(type_pos, type_end - type_pos).c_str(), type_end - type_pos);
                     if(!std::strncmp(newJoint->type, "revolute", 8)) {
                         newJoint->actuated = 1;
-                        newJoint->actuator = num_actuators++;
+                        // newJoint->actuator = num_actuators++;
                         
                     }
                     else if(!std::strncmp(newJoint->type, "prismatic", 9)) {
                         newJoint->actuated = 1;
-                        newJoint->actuator = num_actuators++;
+                        // newJoint->actuator = num_actuators++;
                     }
                 }
 
@@ -452,6 +486,9 @@ void parseURDF(const signed char* urdf_file, int urdflen) {
         #endif
         *urdfParsed = 0;
     }
+
+    SetActuatorNumbers(&joints[0], num_actuators);
+
     // Set the value of the global variable
     *num_joints = joint_num;
     *urdfParsed = 1;
